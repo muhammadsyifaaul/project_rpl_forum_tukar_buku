@@ -1,0 +1,116 @@
+<html></html>
+ <head>
+  <title>
+   Search Book
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #2f3136;
+            color: #b9bbbe;
+        }
+        .container {
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: #36393f;
+            padding: 10px 20px;
+            border-bottom: 1px solid #202225;
+        }
+        .header .plus-icon {
+            font-size: 24px;
+            color: #b9bbbe;
+            margin-right: 20px;
+        }
+        .header .tabs {
+            display: flex;
+            gap: 20px;
+        }
+        .header .tabs a {
+            color: #b9bbbe;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .header .tabs a.active {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+        }
+        .search-section {
+            padding: 20px;
+            background-color: #36393f;
+            border-bottom: 1px solid #202225;
+        }
+        .search-section h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+        }
+        .search-section p {
+            margin: 5px 0 20px;
+            font-size: 14px;
+        }
+        .search-section input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #202225;
+            border-radius: 5px;
+            background-color: #2f3136;
+            color: #b9bbbe;
+            font-size: 14px;
+        }
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 160px);
+            color: #b9bbbe;
+            text-align: center;
+        }
+        .content img {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+  </style>
+ </head>
+ <body>
+  <div class="header">
+   <i class="fas fa-plus plus-icon">
+   </i>
+   <div class="tabs">
+    <a class="active" href="#">
+     Search
+    </a>
+    <a href="#">
+     All
+    </a>
+    <a href="#">
+     Type
+    </a>
+    <a href="#">
+     Genre
+    </a>
+   </div>
+  </div>
+  <div class="search-section">
+   <h2>
+    Search book
+   </h2>
+   <p>
+    You can search book you want below!
+   </p>
+   <input placeholder="Enter title of book" type="text"/>
+  </div>
+  <div class="content">
+   <div>
+    <img alt="Illustration of a character waiting with a cup of coffee" height="100" src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-BVbpSZmLndA7MfHIxv2ahIKS/user-IBY8IaMXtVn7IVIdZeyvjx16/img-9x4dr5vJYNqlOgBLvGH2PdAe.png?st=2024-09-24T06%3A36%3A31Z&amp;se=2024-09-24T08%3A36%3A31Z&amp;sp=r&amp;sv=2024-08-04&amp;sr=b&amp;rscd=inline&amp;rsct=image/png&amp;skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&amp;sktid=a48cca56-e6da-484e-a814-9c849652bcb3&amp;skt=2024-09-23T23%3A25%3A57Z&amp;ske=2024-09-24T23%3A25%3A57Z&amp;sks=b&amp;skv=2024-08-04&amp;sig=SBa9iFqaWRX3zWH3T7aMp4IXDaWLcpDN3ZOkfmaycPw%3D" width="100"/>
+    <p>
+     Wumpus is waiting on friends. You don't have to, though!
+    </p>
+   </div>
+  </div>
+ </body>
+</html>

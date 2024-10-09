@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="src/public/css/reset.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <aside class="nav-aside">
+        
+        <div class="nav-container">
+            <h1>Settings</h1>
+            <div class="nav-menu">
+                <div class="menu">
+                    <h3># | menu 1</h3>
+                </div>
+                <div class="menu">
+                    <h3># | menu 1</h3>
+                </div>
+                <div class="menu">
+                    <h3># | menu 1</h3>
+                </div>
+                <div class="menu">
+                    <h3># | menu 1</h3>
+                </div>
+                <div class="menu">
+                    <h3># | menu 1</h3>
+                </div>
+                <div class="menu">
+                    <h3># | menu 1</h3>
+                </div>
+
+            </div>
+            
+        </div>
+        
+    </aside>
+    <main class="account-container">
+        <h1>My Account</h1>
+        <div class="account">
+            <div class="detail-account">
+                <label for="display-name">Display Name</label>
+                <input type="text" id="display-name" placeholder="Display name">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="username">
+            
+                <label for="email">Email</label>
+                <input type="text" id="email" placeholder="Email">
+            
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Password">
+            
+                <label for="city">City</label>
+                <input type="text" id="city" placeholder="City">
+            
+                <label for="avatar">Avatar</label>
+                
+                <input type="file" id="avatar" style="display:none;" onchange="showFileName(this)">
+                
+                
+                <label for="avatar" class="custom-file-upload" style="font-size: 1rem; color: #fff;">Change Avatar</label>
+                <span id="file-name">No file chosen</span>
+                <button disabled="true">Save</button>
+            </div>
+            
+            
+            <div class="account-img">
+                <img src="icon.jpg" alt="">
+            </div>
+        </div>
+        
+    </main>
+</body>
+</html>

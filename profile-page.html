@@ -7,12 +7,16 @@
 
     <link rel="stylesheet" href="src/public/css/reset.css">
     <link rel="stylesheet" href="style.css">
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
 </head>
 <body>
     <aside class="nav-aside">
         
         <div class="nav-container">
-            <h1>Settings</h1>
+            <h1><i class='bx bx-cog'></i>  Settings</h1>
             <div class="nav-menu">
                 <div class="menu">
                     <h3># | menu 1</h3>
@@ -38,43 +42,113 @@
         </div>
         
     </aside>
-    <main class="profile-container">
-        <h1>My Account</h1>
-        <div class="account">
-            <div class="detail-account">
-                <label for="display-name">Display Name</label>
-                <input type="text" id="display-name" placeholder="Display name">
-                <label for="username">Username</label>
-                <input type="text" id="username" placeholder="username">
-            
-                <label for="email">Email</label>
-                <input type="text" id="email" placeholder="Email">
-            
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Password">
-            
-                <label for="phone-number">Phone Number</label>
-                <input type="text" id="phone-number" placeholder="Phone-number">
-            
-                <label for="city">City</label>
-                <input type="text" id="city" placeholder="City">
-            
-                <label for="avatar">Avatar</label>
-                
-                <input type="file" id="avatar" style="display:none;" onchange="showFileName(this)">
-                
-                
-                <label for="avatar" class="custom-file-upload" style="font-size: 1rem; color: #fff;">Change Avatar</label>
-                <span id="file-name">No file chosen</span>
-                <button disabled="true">Save</button>
+    <main class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="left">
+                   <div class="left-top">
+                    <img src="icon.jpg" alt="Profile" />
+                    <h1>Display Name</h1>
+                   </div>
+                    <div class="left-bottom">
+                        <a href="">Chat</a>
+                    </div>
+                </div>
+                <div class="middle">
+                    <h1><i class='bx bx-book-alt'></i> Books : 100</h1>
+                    <h1><i class='bx bx-conversation'></i> Feedback 100%:</h1>
+                </div>
+                <div class="right">
+                    <h1><i class='bx bx-star' ></i> Ratings : 4.8</h1>
+                    <h1><i class='bx bx-user-plus'></i> Joined : 7 years ago</h1>
+                </div>
             </div>
-            
-            
-            <div class="account-img">
-                <img src="icon.jpg" alt="">
+            <div class="profile-content">
+                <div class="add-book">
+                    <i class='bx bx-plus-circle'></i>
+                </div>
+                <div class="books">
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                    <div class="book">
+                        <div class="book-img">
+                            <img src="icon.jpg" alt="Book" />
+                        </div>
+                        <div class="book-desc">
+                            <h1>Title</h1>
+                            <p>Type : Novel</p>
+                            <p>Author : Author</p>
+                            <p>Genre: Fantasy</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
     </main>
+    
 </body>
 </html>

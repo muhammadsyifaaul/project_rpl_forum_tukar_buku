@@ -2,7 +2,7 @@ const User = require("../models/User")
 const argon2 = require('argon2')
 exports.registerForm = (req,res) => {
     res.render('auth/register', {
-        title: 'Login',
+        title: 'Register',
         layout: 'layouts/authLayouts'
     })
 }

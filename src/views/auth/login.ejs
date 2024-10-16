@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/auth.css">
-</head>
-<body>
-    <form action="">
+    <form action="/login" method="post">
         <h1>Login</h1>
         <div class="input-group">
             <label for="email">Email</label>
@@ -18,9 +8,6 @@
             <label for="password">Password</label>
             <input type="password" required name="password">
         </div>
-        <button>Submit</button>
+        <button type="submit">Submit</button>
         <span>Need an account? <a href="/register">Register</a></span>
     </form>
-    
-</body>
-</html>

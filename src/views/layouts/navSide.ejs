@@ -1,0 +1,29 @@
+<nav class="nav-side">
+  <div class="nav-room">
+    <% rooms.map(room => { 
+      const initials = room.province.split(' ').map(word => word[0]).join(''); 
+    %>
+      <a href="javascript:void(0);" class="icon" data-id="<%- room.province %>" onclick="showCities('<%- room.province %>')">
+        <h1><%- initials %></h1>
+      </a>
+    <% }) %>
+  </div>
+
+  <div class="open-modal-btn" id="openModalBtn">
+    <i class="bx bx-plus-circle"></i>
+  </div>
+</nav>
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModalBtn" class="close">&times;</span>
+    <h2>Choose Room</h2>
+    <form id="addRoomForm" action="/addRoom" class="modal-form" method="POST">
+      <select name="province" id="provinceSelect">
+        <% provinces.forEach(province => { %>
+        <option value="<%- province.province %>"><%- province.province %></option>
+        <% }) %>
+      </select>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>

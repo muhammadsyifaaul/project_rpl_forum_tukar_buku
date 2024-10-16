@@ -10,3 +10,16 @@ confirmPassword.addEventListener('input', () => {
         confirmText.style.opacity = '0'
     }
 })
+const navItems = document.querySelectorAll('.nav-item');
+console.log(navItems)
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        // Hapus kelas 'active' dari semua nav-item
+        navItems.forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
+
+
+
+

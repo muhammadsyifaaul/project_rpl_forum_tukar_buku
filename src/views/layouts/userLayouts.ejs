@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%- title %></title>
+
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/style1.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <aside><%- include('navSide') %> <%- include('rooms') %></aside>
+    <%- body %>
+
+    <script>
+      let rooms = <%- JSON.stringify(rooms) %>;
+      console.log(rooms)
+
+function showCities(province) {
+  const cityRoomList = document.getElementById('cityRoomList');
+  cityRoomList.innerHTML = ''; // Kosongkan konten sebelumnya
+
+  // Filter rooms berdasarkan provinsi yang diklik
+  const filteredRooms = rooms.filter(room => room.province === province);
+
+  // Tampilkan kota dari provinsi yang dipilih
+  filteredRooms.forEach(room => {
+    const roomElement = document.createElement('div');
+    roomElement.classList.add('room');
+    roomElement.innerHTML = `<h3># | ${room.city}</h3>`;
+    cityRoomList.appendChild(roomElement);
+  });
+}
+      // fetch("/getProvince")
+      //       .then((res) => res.json())
+      //       .then((provinces) => {
+      //         console.log(provinces); 
+      //         console.log('success')
+
+      //       })
+      //       .catch((err) => console.error(err));
+      
+      document
+        .querySelector("form.modal-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent form submission to handle asynchronously
+          const selectedProvince = this.querySelector(
+            'select[name="province"]'
+          ).value;
+          
+
+          // Extract initials from the selected province
+          const provinceInitials = selectedProvince
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase())
+            .join("");
+
+          // Add new icon to the nav
+          const nav = document.querySelector(".nav-side");
+          const newIconDiv = document.createElement("div");
+          newIconDiv.classList.add("nav-item");
+
+          newIconDiv.innerHTML = `
+            <div class="white-expand"></div>
+            <div class="icon">
+                <h1>${provinceInitials}</h1>
+            </div>
+        `;
+
+          nav.insertBefore(
+            newIconDiv,
+            document.querySelector(".open-modal-btn")
+          );
+
+          fetch("/addRoom", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ province: selectedProvince }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Room and User updated:", data);
+            })
+            .catch((error) => console.error("Error:", error));
+        });
+      const modal = document.getElementById("myModal");
+      const openModalBtn = document.getElementById("openModalBtn");
+      const closeModalBtn = document.querySelector(".close");
+
+      openModalBtn.addEventListener("click", function () {
+        console.log("hello");
+        modal.style.display = "flex";
+      });
+
+      closeModalBtn.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+      document
+        .getElementById("addRoomForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const province = document.getElementById("provinceSelect").value;
+
+          try {
+            const response = await fetch("/add-room", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ province }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              // Jika berhasil, tambahkan ikon hijau
+              const newIcon = document.createElement("i");
+              newIcon.classList.add("bx", "bx-check-circle");
+              document.querySelector(".nav-side").appendChild(newIcon);
+            } else {
+              console.error(result.message);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        });
+    </script>
+  </body>
+</html>

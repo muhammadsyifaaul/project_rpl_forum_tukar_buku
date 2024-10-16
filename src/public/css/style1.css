@@ -23,16 +23,14 @@ aside {
     position: relative;
     cursor: pointer;
 }
-
-.nav-item img {
-    width: 4vw;
-    height: auto;
+.nav-item .icon {
+    padding: 1rem;
+    background-color: #248046;
     border-radius: 50%;
+    transition: all 0.5s ease;
 }
-
-.nav-item img:hover {
-    border-radius: 30%;
-    transition: border-radius 0.5s ease;
+.nav-item .icon:hover {
+    border-radius: 40%;
 }
 
 .white-expand {
@@ -47,9 +45,8 @@ aside {
     border-bottom-right-radius: 4px;
 }
 
-.nav-item.active .white-expand {
-    height: 40px;
-    top: calc(50% - 20px); 
+.nav-item .icon.active {
+    border-radius: 40%;
 }
 .room-container {
     width: 20vw;
@@ -162,7 +159,7 @@ main {
     z-index: 1000; 
 }
 
-form input {
+.text-form input {
     width: 70%;
     padding: 0.7rem;
     border-radius: 4px;
@@ -363,7 +360,7 @@ form input {
     padding: 0.3rem;
     margin-bottom: 0.3rem;
     text-align: center;
-    cursor: crosshair;
+    cursor: pointer;
 }
 .left-bottom a {
     text-decoration: none;
@@ -436,31 +433,27 @@ form input {
     font-weight: 500;
 }
 .modal {
-    display: none; 
+    display: none;
     position: fixed; 
     z-index: 1; 
     left: 25%;
     bottom: 25%;
     width: 50%; 
     height: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-.open-modal-btn {
-    background-color: transparent;
-    border: none;
-}
+
 .open-modal-btn i {
-    font-size: 2.5rem;
-    color: #fff;
+    cursor: pointer;
+    font-size: 2.7rem;
+    color: #248046;
 }
 
 .modal-content {
-    display: none;
+    color: #fff;
     position: relative;
     background-color: #404246;
     padding: 3rem;
+    margin: auto;
     border: 1px solid #888;
     width: 50%; 
     border-radius: 8px;
@@ -468,6 +461,20 @@ form input {
     flex-direction: column;
     align-items: center;
 
+}
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.modal-content form button {
+    background-color: #248046;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 .modal-content h2 {
     margin-bottom: 2rem;
@@ -499,3 +506,22 @@ form input {
     border: none;
   }
   
+  .nav-room {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    cursor: pointer;
+  }
+
+.nav-room .icon {
+    padding: 1rem;
+    background-color: #248046;
+    border-radius: 50%;
+    transition: all 0.5s ease;
+}
+.nav-room a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+}

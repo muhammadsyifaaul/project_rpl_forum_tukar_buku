@@ -15,8 +15,72 @@
   <body>
     <aside><%- include('navSide') %> <%- include('rooms') %></aside>
     <%- body %>
+    <script src="/socket.io/socket.io.js"></script>
 
     <script>
+      const socket = io();
+
+// Get DOM elements
+
+const messageInput = document.getElementById('messageInput');
+const messageArea = document.getElementById('messageArea');
+const chatForm = document.getElementById('chatForm');
+
+
+// Handle message form submission
+// Handle message form submission
+chatForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  // Get the message text
+  const message = messageInput.value;
+  console.log('Message input: ', message);  // Debugging message input
+
+  if (message.trim()) {
+    console.log('Sending message to server: ', message);  // Debugging message sending
+    socket.emit('chatMessage', message);
+
+    // Clear input field after sending
+    messageInput.value = '';
+  }
+});
+
+// Listen for incoming chat messages
+socket.on('chatMessage', (msg) => {
+  console.log('Message received from server: ', msg);  // Debugging received message
+
+  // Create chat element
+  const chatDiv = document.createElement('div');
+  chatDiv.classList.add('chat');
+  
+  const chatIconDiv = document.createElement('div');
+  chatIconDiv.classList.add('chat-icon');
+  chatIconDiv.innerHTML = `<img src="img/icon.jpg" alt=""/>`;
+
+  const chatDetailDiv = document.createElement('div');
+  chatDetailDiv.classList.add('chat-detail');
+  
+  const chatDateDiv = document.createElement('div');
+  chatDateDiv.classList.add('chat-date');
+  chatDateDiv.innerHTML = `<p>Today</p>`;
+
+  const chatTextDiv = document.createElement('div');
+  chatTextDiv.classList.add('chat-text');
+  chatTextDiv.innerHTML = `<p>${msg}</p>`;
+
+  // Assemble chat message
+  chatDetailDiv.appendChild(chatDateDiv);
+  chatDetailDiv.appendChild(chatTextDiv);
+  chatDiv.appendChild(chatIconDiv);
+  chatDiv.appendChild(chatDetailDiv);
+
+  // Append message to chat area
+  messageArea.appendChild(chatDiv);
+  
+  // Scroll to the bottom of the chat
+  messageArea.scrollTop = messageArea.scrollHeight;
+});
+
       let rooms = <%- JSON.stringify(rooms) %>;
       console.log(rooms)
 

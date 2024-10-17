@@ -146,7 +146,6 @@ main {
     scrollbar-width: none;
     scroll-behavior: smooth;
     color: #ffffff;
-    padding: 2rem;
     padding-bottom: 4rem; 
 }
 
@@ -524,4 +523,49 @@ main {
     text-decoration: none;
     color: #000000;
     font-weight: 600;
+}
+.name-room {
+    width: 100%;
+    height: 4vh;
+    background-color: #313338;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.name-room h1 {
+    font-size: 1.2rem;
+}
+.chat {
+    width: 100%;
+    padding: 0.3rem;
+    min-height: 8vh;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+}
+.chat:hover {
+    background-color: #404246;
+    transition: 0.3s all ease;
+}
+.chat-detail {
+    padding: 0.5rem;
+    width: 100%;
+}
+.chat-icon img {
+    width: 3vw;
+    border-radius: 50%;
+}
+.chat-date p{
+    font-size: 0.8rem;
+}
+.chat-text {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    color: #fff;
+    margin-top: 0.4rem;
 }

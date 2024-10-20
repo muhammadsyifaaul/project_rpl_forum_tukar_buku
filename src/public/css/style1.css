@@ -558,8 +558,13 @@ main {
     width: 3vw;
     border-radius: 50%;
 }
-.chat-date p{
+.chat-date p {
+    font-size: 1rem;
+}
+.chat-date p span{
+    margin-left: 1rem;
     font-size: 0.8rem;
+    color: #b3adad;
 }
 .chat-text {
     display: flex;
@@ -568,4 +573,7 @@ main {
     flex-wrap: wrap;
     color: #fff;
     margin-top: 0.4rem;
+}
+.room a {
+    text-decoration: none;
 }

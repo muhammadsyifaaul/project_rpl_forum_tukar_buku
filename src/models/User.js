@@ -23,6 +23,9 @@ const userSchema = mongoose.Schema({
         type: String, 
         
     },
+    city: {
+        type: String,
+    },
     books: [
         {
             type: mongoose.Schema.Types.ObjectId,

@@ -1,0 +1,33 @@
+<main class="account-container">
+    <h1>My Account</h1>
+    <div class="account">
+        <form class="detail-account" action="/updateProfile" method="post" enctype="multipart/form-data">
+            <label for="display-name">Display Name</label>
+            <input type="text" name="displayName" id="display-name" placeholder="Display name" value="<%- findUser.displayName || 'Enter your display name' %>">
+            
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" placeholder="username" value="<%- findUser.username || 'Enter your username' %>">
+            
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" placeholder="Email" value="<%- findUser.email || 'Enter your email' %>">
+            
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Password">
+            
+            <label for="city">City</label>
+            <input type="text" name="city" id="city" placeholder="City" value="<%- findUser.city || 'Enter your city' %>">
+            
+            <label for="avatar">Avatar</label>
+            <input type="file" name="avatar" id="avatar" style="display:none;" onchange="showFileName(this)">
+            
+            <label for="avatar" class="custom-file-upload" style="font-size: 1rem; color: #fff;">Change Avatar</label>
+            <span id="file-name">No file chosen</span>
+            
+            <button type="submit">Save</button>
+        </form>
+
+        <div class="account-img">
+            <img src="/<%- findUser.avatar || 'img/icon.jpg' %>" alt="Avatar" style="max-width: 150px;">
+        </div>
+    </div>
+</main>

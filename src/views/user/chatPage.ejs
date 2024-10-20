@@ -1,15 +1,16 @@
 <main>
   <div class="main-content">
     <div class="name-room">
-      <h1># | Jawa Barat</h1>
+
     </div>
     <div class="content" id="messageArea"></div>
-    <form class="text-form" id="chatForm">
+    <form class="text-form" id="chatForm" action="/sendChat" method="post">
       <input
         type="text"
         id="messageInput"
         placeholder="Message"
         autocomplete="off"
+        name="message"
       />
     </form>
   </div>

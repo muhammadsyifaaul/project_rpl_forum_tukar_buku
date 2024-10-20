@@ -1,55 +1,81 @@
-const path =require ('path')
-const express = require('express')
+const path = require('path');
+const express = require('express');
 const http = require('http');
-const app = express()
 const socketIo = require('socket.io');
-const server = http.createServer(app);  // Server HTTP yang sama
-const io = socketIo(server);  // Hubungkan ke server HTTP yang sama
-const expressLayouts= require('express-ejs-layouts')
-
+const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
-const authRoutes = require('./src/routes/authRoutes')
-const userRoutes = require('./src/routes/userRoutes')
+const sharedSession = require('express-socket.io-session'); // For sharing session between express and socket.io
+const multer = require('multer')
 
-const connectDb = require('./src/config/connectDb')
+const app = express();
+const server = http.createServer(app);  
+const io = socketIo(server);
 
+const authRoutes = require('./src/routes/authRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const connectDb = require('./src/config/connectDb');
 
-app.set('view engine','ejs')
-
-app.set('views',path.join(__dirname,'src/views'))
-
+// Set up EJS and static files
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'src/views'));
 app.set('layout', 'layouts/layout');
-app.use(express.static(path.join(__dirname,'src/public')))
-app.use(express.urlencoded({extended: true}))
-app.use(expressLayouts)
+app.use(express.static(path.join(__dirname, 'src/public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(express.urlencoded({ extended: true }));
+app.use(expressLayouts);
 app.use(express.json());
-app.use(session({
+
+// Configure session middleware
+const sessionMiddleware = session({
     secret: 'abogoboganaldsHHSd', 
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } 
+});
+
+// Use session middleware in express
+app.use(sessionMiddleware);
+
+// Connect to DB
+connectDb();
+
+
+// Use routes
+app.use(authRoutes);
+app.use(userRoutes);
+
+// Share session middleware between express and socket.io
+io.use(sharedSession(sessionMiddleware, {
+    autoSave: true // Automatically save session changes
 }));
-connectDb()
-app.use(authRoutes)
-app.use(userRoutes)
+
+// Socket.io connection
 io.on('connection', (socket) => {
     console.log('User connected');
-  
-    // Terima pesan dari client
+
+    // Use session to get username when receiving chat message
     socket.on('chatMessage', (msg) => {
-      console.log('Message received from client: ' + msg);  // Debugging received message
-      io.emit('chatMessage', msg);  // Emit kembali ke semua client
+        const user = socket.handshake.session.user; // Use the session from handshake
+        const username = user ? user.username : 'Unknown User'; // Fallback if no username
+        const timestamp = new Date().toLocaleString(); // Generate current timestamp
+
+        // Emit the message to all clients with username and timestamp
+        io.emit('chatMessage', {
+            message: msg,
+            username: username,
+            timestamp: timestamp
+        });
+
+        console.log(`Message from ${username} at ${timestamp}: ${msg}`);
     });
-    
-    // Saat user disconnect
+
     socket.on('disconnect', () => {
-      console.log('User disconnected');
+        console.log('User disconnected');
     });
-  });
-  
+});
 
-
+// Start the server
 server.listen(3000, () => {
     console.log('Server running on port 3000');
 });
-

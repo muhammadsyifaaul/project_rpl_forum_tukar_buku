@@ -56,19 +56,19 @@ io.on('connection', (socket) => {
 
     // Use session to get username when receiving chat message
     socket.on('chatMessage', (msg) => {
-        const user = socket.handshake.session.user; // Use the session from handshake
-        const username = user ? user.username : 'Unknown User'; // Fallback if no username
-        const timestamp = new Date().toLocaleString(); // Generate current timestamp
-
-        // Emit the message to all clients with username and timestamp
+        const user = socket.handshake.session.user;
+        const username = user ? user.username : 'Unknown User';
+        const timestamp = new Date().toLocaleString();
+    
+        console.log(`Message from ${username} at ${timestamp}: ${msg}`);  // Log untuk debugging
+    
         io.emit('chatMessage', {
             message: msg,
             username: username,
             timestamp: timestamp
         });
-
-        console.log(`Message from ${username} at ${timestamp}: ${msg}`);
     });
+    
 
     socket.on('disconnect', () => {
         console.log('User disconnected');

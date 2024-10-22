@@ -1,5 +1,8 @@
 <nav class="nav-side">
   <div class="nav-room">
+    <a href="javascript:void(0);" class="icon private-chat" data-id="" onclick="showCities('')">
+      <h1>PM</h1>
+    </a>
     <% rooms.map(room => { 
       const initials = room.province.split(' ').map(word => word[0]).join(''); 
     %>

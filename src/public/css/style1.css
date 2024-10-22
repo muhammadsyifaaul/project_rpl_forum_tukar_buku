@@ -151,11 +151,10 @@ main {
 
 .text-form {
     width: 100%;
-    padding: 1rem 2rem 2rem 1.32rem;
+    padding: 0rem 2rem 2rem 1.32rem;
     position: fixed;
     bottom: 0;
     background-color: #282a2e; 
-    z-index: 1000; 
 }
 
 .text-form input {
@@ -508,6 +507,7 @@ main {
   .nav-room {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
     position: relative;
     cursor: pointer;
@@ -576,4 +576,8 @@ main {
 }
 .room a {
     text-decoration: none;
+}
+#messageArea {
+    overflow-y: auto;
+    height: 70vh; 
 }

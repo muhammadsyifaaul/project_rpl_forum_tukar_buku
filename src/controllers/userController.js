@@ -6,6 +6,8 @@ exports.dashboard = async (req,res) => {
     const user = req.session.user;
     const provinces = await Room.find()
     const rooms = await Room.find({ users: user.id });
+    const users = await User.findById(user.id)
+    console.log(users)
     // const messages = await Message.find({sender : user.id}).populate('sender')
     console.log(user)
     // console.log(messages)
@@ -18,7 +20,8 @@ exports.dashboard = async (req,res) => {
         layout: 'layouts/userLayouts',
         rooms,
         user,
-        provinces
+        provinces,
+        users
     })
 }
 exports.profilePage = async (req,res) => {
@@ -122,7 +125,9 @@ exports.getMessage = async(req,res) => {
     // const user = req.session.user
     const {city} = req.body
     const messages = await Message.find({cityRoom : city}).populate('sender')
+    console.log(messages)
     res.status(200).json({data : messages})
+    console.log(messages)
 }
 exports.updateProfile = async (req, res) => {
     try {

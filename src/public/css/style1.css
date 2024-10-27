@@ -581,3 +581,91 @@ main {
     overflow-y: auto;
     height: 70vh; 
 }
+
+.direct-msg-form {
+    background: linear-gradient(180deg, #71624f 40%, #111214 30%);
+    width: 20%;
+    height: 50vh;
+    padding: 0.6rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    border-radius: 8px;
+}
+.top-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    color: #ffffff;
+}
+.top-section img {
+    width: 5vw;
+    border-radius: 50%;
+    border: 7px solid #1e1f22;
+}
+.bottom-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    color: #ffffff;
+}
+.bottom-section a {
+    text-decoration: none;
+    width: 100%;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #2f9e44;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.bottom-section a:hover {
+    background-color: #248046;
+    transition: 0.3s all ease;
+}
+.bottom-section form {
+    width: 104%;
+    display: flex;
+    justify-content: center;
+}
+.bottom-section input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    background-color: #313338;
+    color: #fff;
+}
+.bottom-section input::placeholder {
+    text-align: center;
+}
+
+.user-dm {
+    width: 90%;
+    display: flex;
+    padding: 0.3rem 1rem;
+    gap: 1rem;
+    align-items: center;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+}
+.user-dm:hover {
+    background-color: #404246;
+    transition: 0.3s all ease;
+}
+
+.user-img img {
+    width: 3vw;
+    border-radius: 50%;
+}

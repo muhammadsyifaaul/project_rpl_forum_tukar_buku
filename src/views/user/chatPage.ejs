@@ -4,6 +4,20 @@
 
     </div>
     <div class="content" id="messageArea"></div>
+    <div class="direct-msg-form">
+      <div class="top-section">
+        <img src="img/icon.jpg" alt="">
+      </div>
+      <div class="bottom-section">
+        <h1>Display Name</h1>
+        <h1>Username</h1>
+        <a href="">Profile</a>
+        <form action="/directMessage" method="post" id="dmForm">
+          <input type="text" placeholder="Message @username" id="directMessageInput" name="massage"/>
+          <input type="hidden" name="targetUsername" id="targetUsername" /> 
+      </form>
+      </div>
+    </div>
     <form class="text-form" id="chatForm" action="/sendChat" method="post">
       <input
         type="text"

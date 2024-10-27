@@ -7,9 +7,6 @@ exports.dashboard = async (req,res) => {
     const provinces = await Room.find()
     const rooms = await Room.find({ users: user.id });
     const users = await User.findById(user.id)
-    console.log(users)
-    // const messages = await Message.find({sender : user.id}).populate('sender')
-    console.log(user)
     // console.log(messages)
     if (!req.session.user) {
         return res.redirect('/login'); 
@@ -44,7 +41,7 @@ exports.settings = async (req,res) => {
 }
 exports.settings = async (req, res) => {
     try {
-        const userId = req.session.user?.id; // Ensure session exists
+        const userId = req.session.user?.id; 
 
         if (!userId) {
             return res.redirect('/login');
@@ -90,27 +87,33 @@ exports.addRoom = async (req, res) => {
     }
 };
 
-
 exports.sendChat = async (req, res) => {
+    const user = req.session.user;  
+    console.log(user)
     try {
-        const { chat, city, roomType, receiverId } = req.body;  // Ambil data dari request body
+        const { chat, city, roomType } = req.body; 
+        // console.log('Room Type:', req.session.user.roomStatus);
+        const roomStatus = req.session.user.roomStatus; 
+        
 
-        // Buat instance Message baru
         const messageData = {
             message: chat,
-            sender: req.session.user.id,  // Ambil ID user dari session
-            room: roomType  // Tentukan apakah room public atau private
+            sender: req.session.user.id,  
+            room: roomStatus,
+            receiver:   req.session.user.receiver
         };
 
-        if (roomType === 'public') {
-
+        if (roomStatus === 'public') {
             messageData.cityRoom = city;  
-        } else if (roomType === 'private') {
-
-            messageData.receiver = receiverId;  
+            messageData.receiver = undefined
+        } else if (roomStatus === 'private') {
+            if (req.session.user.receiver) {
+                messageData.receiver = req.session.user.receiver;  
+            } else {
+                console.warn('Receiver is not set in session.');
+            }
         }
 
-        // Simpan pesan ke dalam database
         const message = new Message(messageData);
         await message.save();
 
@@ -121,13 +124,12 @@ exports.sendChat = async (req, res) => {
     }
 };
 
+
 exports.getMessage = async(req,res) => {
     // const user = req.session.user
     const {city} = req.body
     const messages = await Message.find({cityRoom : city}).populate('sender')
-    console.log(messages)
     res.status(200).json({data : messages})
-    console.log(messages)
 }
 exports.updateProfile = async (req, res) => {
     try {
@@ -159,7 +161,6 @@ exports.updateProfile = async (req, res) => {
 
         await user.save();
 
-        // Refresh session dengan user yang baru diupdate dari database
         req.session.user = {
             id: user._id,
             displayName: user.displayName,
@@ -176,4 +177,72 @@ exports.updateProfile = async (req, res) => {
         console.error('Error during profile update:', error);
         res.status(500).send('An error occurred while updating the profile.');
     }
+};
+
+
+exports.directMessage = async (req, res) => {
+    const { chat, targetUsername } = req.body;  
+
+    try {
+        const targetUser = await User.findOne({ username: targetUsername });
+
+        if (!targetUser) {
+            return res.status(404).json({ message: 'User not found' });  
+        }
+        const message = new Message({
+            sender: user.id,  
+            receiver: targetUser._id,  
+            message: chat,  
+            room: 'private'  
+        });
+
+        const savedMessage = await message.save();
+
+        if (savedMessage && savedMessage._id) {
+            console.log('Pesan berhasil disimpan:', savedMessage);  
+            res.status(200).json({ message: 'Pesan berhasil dikirim', data: savedMessage });
+        } else {
+            console.log('Pesan gagal disimpan');  
+            res.status(500).json({ message: 'Pesan gagal disimpan' });
+        }
+        
+
+    } catch (error) {
+
+        console.error('Error saat mengirim pesan:', error);
+        res.status(500).json({ message: 'Terjadi kesalahan server', error });
+    }
+};
+exports.getAllDm = async (req, res) => {
+    const userId = req.session.user.id;
+    try {
+        const allDm = await Message.find({ room: 'private' ,sender: userId}).populate('receiver')
+        res.status(200).json({data: allDm});
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+};
+
+exports.getMsgById = async(req,res) => {
+    const {targetId} = req.body
+    const userId = req.session.user.id
+    const messages = await Message.find({sender: userId, receiver: targetId}).populate('sender')
+    res.status(200).json({data : messages})
+}
+
+exports.updateSession = async (req, res) => {
+    const { roomStatus, targetUser } = req.body;
+    let receiver;
+    if (targetUser) {
+        const userReceiver = await User.findOne({ username: targetUser });
+        receiver = userReceiver ? userReceiver._id : null; 
+    }
+    const user = req.session.user;
+    user.roomStatus = roomStatus;
+    if (receiver) {
+        user.receiver = receiver;
+    }
+    
+    // Kirim respons setelah memperbarui sesi
+    res.status(200).json({ message: 'Session updated successfully' });
 };

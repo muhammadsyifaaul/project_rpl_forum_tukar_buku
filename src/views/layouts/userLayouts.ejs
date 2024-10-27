@@ -16,53 +16,44 @@
     <aside><%- include('navSide') %> <%- include('rooms') %></aside>
     <%- body %>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
-                  const socket = io();
+    const socket = io();
+    const messageInput = document.getElementById('messageInput');
+    const messageArea = document.getElementById('messageArea');
+    const chatForm = document.getElementById('chatForm');
+    const roomName = document.querySelector('.room-title h1');
+    let chats;
+    let currentRoom = '';
+    let roomType
+    let users = <%- JSON.stringify(users) %>;
 
-                  // Get DOM elements
-                  const messageInput = document.getElementById('messageInput');
-                  const messageArea = document.getElementById('messageArea');
-                  const chatForm = document.getElementById('chatForm');
-                  let currentRoom = '';
-                  let roomType = '';
-                  let users = <%- JSON.stringify(users) %>;
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        fetch('/sendChat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat: messageInput.value,
+                city: currentRoom,
+                roomType
+            })
+        });
 
-                  chatForm.addEventListener('submit', (e) => {
-                      e.preventDefault();
-                      fetch('/sendChat', {
-                          method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({
-                              chat: messageInput.value,
-                              city: currentRoom,
-                              roomType
-                          })
-                      });
+        const message = messageInput.value.trim();
 
-                      // Get the message text
-                      const message = messageInput.value.trim();
-
-                      if (message) {
-                          // Send only the message to the server (no need for username or timestamp)
-                          socket.emit('chatMessage', message);
-
-                          // Clear input field after sending
-                          messageInput.value = '';
-                      }
-                  });
-
-                  // Listen for incoming chat messages
-                  socket.on('chatMessage', (msg) => {
-    console.log(`Incoming message from server:`, msg);
-
-    // Check if the message data contains the username and message content
+        if (message) {
+            socket.emit('chatMessage', message);
+            messageInput.value = '';
+        }
+    });
+    socket.on('chatMessage', (msg) => {
+        console.log(`Incoming message from server:`, msg);
     if (msg && msg.username && msg.message) {
         console.log(`Rendering message from: ${msg.username} with content: ${msg.message}`);
-
-        // Optional: Check if the same message already exists in the chat area
         const existingMessages = document.querySelectorAll('.chat-detail');
         let messageAlreadyExists = false;
         existingMessages.forEach(messageDetail => {
@@ -73,7 +64,7 @@
         });
 
         if (!messageAlreadyExists) {
-            // Create chat element
+
             const chatDiv = document.createElement('div');
             chatDiv.classList.add('chat');
 
@@ -92,199 +83,347 @@
             const chatTextDiv = document.createElement('div');
             chatTextDiv.classList.add('chat-text');
             chatTextDiv.innerHTML = `<p>${msg.message}</p>`;
-
-            // Assemble chat message
             chatDetailDiv.appendChild(chatDateDiv);
             chatDetailDiv.appendChild(chatTextDiv);
             chatDiv.appendChild(chatIconDiv);
             chatDiv.appendChild(chatDetailDiv);
 
-            // Append message to chat area
-            messageArea.appendChild(chatDiv);
 
-            // Scroll to the bottom of the chat area
-            setTimeout(() => {
-                messageArea.scrollTop = messageArea.scrollHeight;
-            }, 100);
+            messageArea.appendChild(chatDiv);
+            messageArea.scrollTop = messageArea.scrollHeight;
         }
-    } else {
+        } else {
         console.error('Received malformed message:', msg);
+        }
+    });
+
+
+
+    let rooms = <%- JSON.stringify(rooms) %>;
+    console.log(rooms);
+
+    function showCities(province) {
+        const cityRoomList = document.getElementById('cityRoomList');
+        cityRoomList.innerHTML = ''; 
+        const filteredRooms = rooms.filter(room => room.province === province);
+        filteredRooms.forEach(room => {
+            const roomElement = document.createElement('div');
+            roomElement.classList.add('room');
+            roomElement.innerHTML = `<a href='javascript:void(0)' onclick="showCityRoom('${room.city}'); getMessage('${room.city}');updateSession('public');"><h3># | ${room.city}</h3></a> `;
+            cityRoomList.appendChild(roomElement);
+        });
     }
+    function updateSession(roomStatus, targetUser) {
+        axios.post('/updateSession', {
+            roomStatus,
+            targetUser: targetUser !== undefined ? targetUser : null
+        })
+        .then(res => console.log('success', res))
+        .catch(err => console.log('failed to update session', err));
+      }
+
+
+
+    function getMessage(city) {
+
+        messageArea.innerHTML = '';
+
+        return fetch('/getMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                city: city
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            const messages = result.data;
+            messages.forEach(msg => {
+                const chatDiv = document.createElement('div');
+                chatDiv.classList.add('chat');
+                chatDiv.dataset.displayname = msg.sender.displayName || 'not set';
+                chatDiv.dataset.username = msg.sender.username;
+                const chatIconDiv = document.createElement('div');
+                chatIconDiv.classList.add('chat-icon');
+                const avatar = msg.sender.avatar ? msg.sender.avatar : 'img/icon.jpg';
+                chatIconDiv.innerHTML = `<a href="javascript:void(0);"><img src="${avatar}" alt=""/></a>`;
+                const chatDetailDiv = document.createElement('div');
+                chatDetailDiv.classList.add('chat-detail');
+
+                const chatDateDiv = document.createElement('div');
+                chatDateDiv.classList.add('chat-date');
+                chatDateDiv.innerHTML = `<p>${msg.sender.username}<span>${new Date(msg.createdAt).toLocaleString()}</span></p>`;
+
+                const chatTextDiv = document.createElement('div');
+                chatTextDiv.classList.add('chat-text');
+                chatTextDiv.innerHTML = `<p>${msg.message}</p>`;
+
+                chatDetailDiv.appendChild(chatDateDiv);
+                chatDetailDiv.appendChild(chatTextDiv);
+                chatDiv.appendChild(chatIconDiv);
+                chatDiv.appendChild(chatDetailDiv);
+                messageArea.appendChild(chatDiv);
+            });
+
+            messageArea.scrollTop = messageArea.scrollHeight;
+            chats = document.querySelectorAll('.chat');
+
+            getAllChats(chats)
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+
+
+
+
+const icons = document.querySelectorAll('.icon');
+icons.forEach(icon => {
+    icon.addEventListener('click', function () {
+        roomName.innerHTML = '';
+        roomName.innerHTML = 'City Room';
+    });
 });
 
+function showCityRoom(city) {
+    const nameRoom = document.querySelector('.name-room');
+
+    roomName.innerHTML = 'City Room';
+    nameRoom.innerHTML = `<h1># | ${city}</h1>`;
+    currentRoom = city;
+    roomType = 'public';
+}
 
 
-                  let rooms = <%- JSON.stringify(rooms) %>;
-                  console.log(rooms);
+document.querySelector("form.modal-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const selectedProvince = this.querySelector('select[name="province"]').value;
 
-                  function showCities(province) {
-                      const cityRoomList = document.getElementById('cityRoomList');
-                      cityRoomList.innerHTML = ''; // Kosongkan konten sebelumnya
 
-                      // Filter rooms berdasarkan provinsi yang diklik
-                      const filteredRooms = rooms.filter(room => room.province === province);
+        const provinceInitials = selectedProvince
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase())
+        .join("");
+        const nav = document.querySelector(".nav-side");
+        const newIconDiv = document.createElement("div");
+        newIconDiv.classList.add("nav-item");
 
-                      // Tampilkan kota dari provinsi yang dipilih
-                      filteredRooms.forEach(room => {
-                          const roomElement = document.createElement('div');
-                          roomElement.classList.add('room');
-                          roomElement.innerHTML = `<a href='javascript:void(0)' onclick="showCityRoom('${room.city}'); getMessage('${room.city}');"><h3># | ${room.city}</h3></a> `;
-                          cityRoomList.appendChild(roomElement);
-                      });
-                  }
+        newIconDiv.innerHTML = `
+        <div class="white-expand"></div>
+        <div class="icon">
+        <a href="javascript:void(0);" class="icon" data-id="${selectedProvince}" onclick="showCities('${selectedProvince}')">
+        <h1>${provinceInitials}</h1>
+        </a>
+        </div>
+        `;
 
-                  function getMessage(city) {
-                      // Kosongkan pesan sebelumnya sebelum menambahkan pesan baru
-                      messageArea.innerHTML = '';
 
-                      fetch('/getMessage', {
-                          method: 'POST',
-                          headers: {
-                              'Content-Type': 'application/json'
-                          },
-                          body: JSON.stringify({
-                              city: city
-                          })
-                      })
-                      .then(response => response.json())
-                      .then(result => {
-                          const messages = result.data;
-                          messages.forEach(msg => {
-                              const chatDiv = document.createElement('div');
-                              chatDiv.classList.add('chat');
+        nav.insertBefore(newIconDiv, document.querySelector(".open-modal-btn"));
 
-                              const chatIconDiv = document.createElement('div');
-                              chatIconDiv.classList.add('chat-icon');
-                              const avatar = msg.sender.avatar ? msg.sender.avatar : 'img/icon.jpg';
-                              chatIconDiv.innerHTML = `<img src="${avatar}" alt=""/>`;
-                              const chatDetailDiv = document.createElement('div');
-                              chatDetailDiv.classList.add('chat-detail');
+        fetch("/addRoom", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ province: selectedProvince }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Room and User updated:", data);
+        })
+        .catch((error) => console.error("Error:", error));
+        });
 
-                              const chatDateDiv = document.createElement('div');
-                              chatDateDiv.classList.add('chat-date');
-                              chatDateDiv.innerHTML = `<p>${msg.sender.username}<span>${new Date(msg.createdAt).toLocaleString()}</span></p>`;
+        const modal = document.getElementById("myModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.querySelector(".close");
 
-                              const chatTextDiv = document.createElement('div');
-                              chatTextDiv.classList.add('chat-text');
-                              chatTextDiv.innerHTML = `<p>${msg.message}</p>`;
+        openModalBtn.addEventListener("click", function () {
+            console.log("hello");
+            modal.style.display = "flex";
+        });
 
-                              // Rakit pesan chat
-                              chatDetailDiv.appendChild(chatDateDiv);
-                              chatDetailDiv.appendChild(chatTextDiv);
-                              chatDiv.appendChild(chatIconDiv);
-                              chatDiv.appendChild(chatDetailDiv);
+        closeModalBtn.onclick = function () {
+            modal.style.display = "none";
+        };
 
-                              // Tambahkan pesan ke area chat
-                              messageArea.appendChild(chatDiv);
-                          });
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+        }
+};
+document.getElementById("addRoomForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-                          // Scroll to the bottom of the chat area after loading old messages
-                          messageArea.scrollTop = messageArea.scrollHeight;
-                      })
-                      .catch(error => {
-                          console.error('Error:', error);
-                      });
-                  }
+        const province = document.getElementById("provinceSelect").value;
 
-                  function showCityRoom(city) {
-                      const nameRoom = document.querySelector('.name-room');
-                      nameRoom.innerHTML = `<h1># | ${city}</h1>`;
-                      currentRoom = city;
-                      roomType = 'public';
-                  }
+        try {
+            const response = await fetch("/add-room", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ province }),
+            });
 
-                  // Modal form submit logic
-                  document.querySelector("form.modal-form").addEventListener("submit", function (event) {
-                      event.preventDefault(); // Prevent form submission to handle asynchronously
-                      const selectedProvince = this.querySelector('select[name="province"]').value;
+            const result = await response.json();
 
-                      // Extract initials from the selected province
-                      const provinceInitials = selectedProvince
-                          .split(" ")
-                          .map(word => word.charAt(0).toUpperCase())
-                          .join("");
+            if (result.success) {
+                const newIcon = document.createElement("i");
+                newIcon.classList.add("bx", "bx-check-circle");
+                document.querySelector(".nav-side").appendChild(newIcon);
+            } else {
+                console.error(result.message);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+        });
+        const iconChat = document.querySelector('.private-chat')
 
-                      // Tambahkan icon baru ke dalam nav
-                      const nav = document.querySelector(".nav-side");
-                      const newIconDiv = document.createElement("div");
-                      newIconDiv.classList.add("nav-item");
 
-                      // Membuat elemen icon baru dengan template literals dan `provinceInitials`
-                      newIconDiv.innerHTML = `
-                          <div class="white-expand"></div>
-                          <div class="icon">
-                              <a href="javascript:void(0);" class="icon" data-id="${selectedProvince}" onclick="showCities('${selectedProvince}')">
-                                  <h1>${provinceInitials}</h1>
-                              </a>
-                          </div>
-                      `;
+        iconChat.addEventListener('click', () => {
+        roomName.innerHTML = 'Direct Message';
+});
+function getAllChats(chats) {
+    const dmForm = document.querySelector('.direct-msg-form');
+    const displayNameField = dmForm.querySelector('h1:nth-child(1)');
+    const usernameField = dmForm.querySelector('h1:nth-child(2)');
+    const messageInput = dmForm.querySelector('input[type="text"]');
+    const targetUsernameInput = document.getElementById('targetUsername');
 
-                      // Sisipkan ikon baru ke dalam navigasi
-                      nav.insertBefore(newIconDiv, document.querySelector(".open-modal-btn"));
+    chats.forEach(chat => {
+        chat.addEventListener('click', function() {
+            const displayName = chat.dataset.displayname;
+            const username = chat.dataset.username;
 
-                      fetch("/addRoom", {
-                          method: "POST",
-                          headers: {
-                              "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ province: selectedProvince }),
-                      })
-                      .then((response) => response.json())
-                      .then((data) => {
-                          console.log("Room and User updated:", data);
-                      })
-                      .catch((error) => console.error("Error:", error));
-                  });
+            displayNameField.textContent = displayName;
+            usernameField.textContent = username;
+            messageInput.placeholder = `Message @${username}`;
+            targetUsernameInput.value = username;
 
-                  const modal = document.getElementById("myModal");
-                  const openModalBtn = document.getElementById("openModalBtn");
-                  const closeModalBtn = document.querySelector(".close");
+            dmForm.style.display = 'flex';
+        });
+    });
 
-                  openModalBtn.addEventListener("click", function () {
-                      console.log("hello");
-                      modal.style.display = "flex";
-                  });
+}
+    const dmForm = document.getElementById('dmForm');
+    const dmMsgInput = document.getElementById('directMessageInput');
+    const targetUsernameInput = document.getElementById('targetUsername');
+    const dmFormContainer = document.querySelector('.direct-msg-form');
+    dmForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-                  closeModalBtn.onclick = function () {
-                      modal.style.display = "none";
-                  };
+        const message = dmMsgInput.value;
+        const targetUsername = targetUsernameInput.value;
 
-                  window.onclick = function (event) {
-                      if (event.target == modal) {
-                          modal.style.display = "none";
-                      }
-                  };
 
-                  document.getElementById("addRoomForm").addEventListener("submit", async function (e) {
-                      e.preventDefault();
+        fetch('/directMessage', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat: message,
+                targetUsername: targetUsername,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
 
-                      const province = document.getElementById("provinceSelect").value;
+            console.log('Pesan berhasil dikirim:', data);
+        })
+        .catch(error => {
+            console.error('Gagal mengirim pesan:', error);
+        });
+        dmFormContainer.style.display = 'none'
+    });
+function showDm() {
+    const rooms = document.querySelector('.rooms');
+    rooms.innerHTML = '';
 
-                      try {
-                          const response = await fetch("/add-room", {
-                              method: "POST",
-                              headers: {
-                                  "Content-Type": "application/json",
-                              },
-                              body: JSON.stringify({ province }),
-                          });
+    axios.get('/getAllDm')
+    .then(res => {
+        let data = res.data.data;
+        console.log(data);
+        if(data.length == 0) {
+            rooms.innerHTML = '<h1> No DM Chat </h1>'
+        }
 
-                          const result = await response.json();
+        // Filter pengguna unik berdasarkan username
+        const uniqueUsers = data.filter((user, index, self) =>
+            index === self.findIndex((u) => u.receiver.username === user.receiver.username)
+        );
 
-                          if (result.success) {
-                              // Jika berhasil, tambahkan ikon hijau
-                              const newIcon = document.createElement("i");
-                              newIcon.classList.add("bx", "bx-check-circle");
-                              document.querySelector(".nav-side").appendChild(newIcon);
-                          } else {
-                              console.error(result.message);
-                          }
-                      } catch (error) {
-                          console.error("Error:", error);
-                      }
-                  });
+        uniqueUsers.forEach(user => {
+            rooms.innerHTML += `
+            <a href='javascript:void(0);' onclick="getMsgById('${user.receiver._id}');updateSession('private', '${user.receiver.username}');" class="room">
+                <div class="user-dm">
+                    <div class="user-img">
+                        <img src="${user.receiver.avatar || 'img/icon.jpg'}" alt="Profile" />
+                    </div>
+                    <div class="user-text">
+                        <h1>${user.receiver.username || 'not set'}</h1>
+                    </div>
+                </div>
+            </a>`;
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 
-            // private
+      }
+
+      function getMsgById(targetId) {
+          console.log(targetId);
+          messageArea.innerHTML = ''
+          axios.post('/getMsgById',{
+              targetId
+          })
+          .then(res => {
+              let data = res.data.data;
+              console.log(data)
+              const messages = data;
+                messages.forEach(msg => {
+                    const chatDiv = document.createElement('div');
+                    chatDiv.classList.add('chat');
+                    chatDiv.dataset.displayname = msg.sender.displayName || 'not set';
+                    chatDiv.dataset.username = msg.sender.username;
+                    const chatIconDiv = document.createElement('div');
+                    chatIconDiv.classList.add('chat-icon');
+                    const avatar = msg.sender.avatar ? msg.sender.avatar : 'img/icon.jpg';
+                    chatIconDiv.innerHTML = `<a href="javascript:void(0);"><img src="${avatar}" alt=""/></a>`;
+                    const chatDetailDiv = document.createElement('div');
+                    chatDetailDiv.classList.add('chat-detail');
+
+                    const chatDateDiv = document.createElement('div');
+                    chatDateDiv.classList.add('chat-date');
+                    chatDateDiv.innerHTML = `<p>${msg.sender.username}<span>${new Date(msg.createdAt).toLocaleString()}</span></p>`;
+
+                    const chatTextDiv = document.createElement('div');
+                    chatTextDiv.classList.add('chat-text');
+                    chatTextDiv.innerHTML = `<p>${msg.message}</p>`;
+
+                    chatDetailDiv.appendChild(chatDateDiv);
+                    chatDetailDiv.appendChild(chatTextDiv);
+                    chatDiv.appendChild(chatIconDiv);
+                    chatDiv.appendChild(chatDetailDiv);
+
+                    messageArea.appendChild(chatDiv);
+            });
+
+            messageArea.scrollTop = messageArea.scrollHeight;
+
+            chats = document.querySelectorAll('.chat');
+
+          })
+      }
+
     </script>
   </body>
 </html>

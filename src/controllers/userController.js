@@ -243,6 +243,5 @@ exports.updateSession = async (req, res) => {
         user.receiver = receiver;
     }
     
-    // Kirim respons setelah memperbarui sesi
     res.status(200).json({ message: 'Session updated successfully' });
 };

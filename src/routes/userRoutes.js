@@ -4,10 +4,10 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 
-// Rute untuk dashboard
 router.get('/dashboard', dashboard);
 router.get('/profilePage',profilePage)
 router.get('/settings',settings)
+router.get('/account',settings)
 router.get('/getAllDm',getAllDm)
 router.post('/getMessage',getMessage)
 router.post('/addRoom',addRoom);

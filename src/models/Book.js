@@ -20,6 +20,17 @@ const bookSchema = mongoose.Schema({
     author: {
         type: String,
         required: true
+    },
+    description: {
+        type: String,
+        maxlength: 500
+    },
+    cover: {
+        type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 })
 

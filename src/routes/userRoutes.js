@@ -1,5 +1,5 @@
 const express = require('express');
-const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession} = require('../controllers/userController');
+const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook} = require('../controllers/userController');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
@@ -9,6 +9,7 @@ router.get('/profilePage',profilePage)
 router.get('/settings',settings)
 router.get('/account',settings)
 router.get('/getAllDm',getAllDm)
+router.get('/details/:id',getDetailsBook)
 router.post('/getMessage',getMessage)
 router.post('/addRoom',addRoom);
 router.post('/sendChat',sendChat)
@@ -36,7 +37,6 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Set up multer middleware
 const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, 
@@ -44,5 +44,5 @@ const upload = multer({
 });
 
 router.post('/updateProfile', upload.single('avatar'), updateProfile);
-
+router.post('/uploadBook',upload.single('coverBook'),uploadBook);
 module.exports = router;

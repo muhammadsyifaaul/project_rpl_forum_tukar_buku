@@ -297,7 +297,8 @@ function getAllChats(chats) {
     const targetUsernameInput = document.getElementById('targetUsername');
 
     chats.forEach(chat => {
-        chat.addEventListener('click', function() {
+        chat.addEventListener('click', function(e) {
+            e.stopPropagation();
             const displayName = chat.dataset.displayname;
             const username = chat.dataset.username;
 
@@ -342,6 +343,14 @@ function getAllChats(chats) {
         });
         dmFormContainer.style.display = 'none'
     });
+    function hideForm(e) {
+    // Cek apakah klik bukan di dalam form
+    if (dmFormContainer.style.display === 'flex' && !dmFormContainer.contains(e.target)) {
+        dmFormContainer.style.display = 'none';
+    }
+}
+
+document.addEventListener('click', hideForm);
 function showDm() {
     const rooms = document.querySelector('.rooms');
     rooms.innerHTML = '';

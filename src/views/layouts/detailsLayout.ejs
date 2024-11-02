@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <title>
+   <%- title %>
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  <style>
+   body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1f22;;
+        }
+        .back i {
+            margin-left: 3rem;
+            margin-top: 2rem;
+            font-size: 4rem;
+            font-weight: bold;
+            color: #54b0fc;
+        }
+        .back i:hover {
+            color: #3f84bd;
+            transition: all 0.5s ease-in-out;
+        }
+        .meta a {
+            text-decoration: none;
+            color: #54b0fc;
+        }
+        .meta a:hover {
+            color: #ccc;
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+            background-color: #37383a;
+            max-width: 900px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: #fff;
+        }
+        .book-cover {
+            flex: 1;
+            padding-right: 20px;
+        }
+        .book-cover img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .book-details {
+            flex: 2;
+        }
+        .book-details h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .book-details p {
+            margin: 5px 0;
+        }
+        .book-details .meta {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .book-details .meta p {
+            flex: 1;
+            margin: 5px 0;
+        }
+        .book-details .meta p span {
+            font-weight: bold;
+        }
+        .book-details .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .book-details .actions a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+        }
+        .book-details .actions a i {
+            margin-right: 5px;
+        }
+        .description {
+            margin-top: 20px;
+        }
+        .description h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .description p {
+            text-align: justify;
+            line-height: 1.6;
+        }
+  </style>
+ </head>
+ <body>
+    <%- body %>
+ </body>
+ </html>

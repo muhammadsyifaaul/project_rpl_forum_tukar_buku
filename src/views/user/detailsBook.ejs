@@ -1,0 +1,47 @@
+<div class="back">
+  <a href="/profilePage"><i class='bx bx-undo'></i></a>
+</div>
+<div class="container">
+
+  <div class="book-cover">
+    <img alt="Book cover of 'Sisi Tergelap Surga' showing a cityscape at night with a person sitting on a rooftop." height="300" src="/<%= bookData.cover.replace('\\', '/') %>" width="200"/>
+
+  </div>
+  <div class="book-details">
+    <h1><%- bookData.title %></h1>
+    <div class="meta">
+      <p>
+        <span> Type </span>
+        : <% bookData.type.forEach((e, index) => { %>
+          <a href=""><%- e %></a><%= index < bookData.genre.length - 1 ? ', ' : '' %>
+        <% }); %>
+      </p>
+      <p>
+        <span> Genre </span>
+        :
+        <% bookData.genre.forEach((e, index) => { %>
+          <a href=""><%- e %></a><%= index < bookData.genre.length - 1 ? ', ' : '' %>
+        <% }); %>
+      </p>     
+      <p>
+        <span> Author </span>
+        :
+        <a href="#"> <%- bookData.author %> </a>
+      </p>
+    </div>
+    <div class="actions">
+      <a href="#">
+        <i class="fas fa-heart"> </i>
+        Wishlist
+      </a>
+      <a href="#">
+        <i class="fas fa-share-alt"> </i>
+        Bagikan
+      </a>
+    </div>
+    <div class="description">
+      <h2>Book Description</h2>
+      <p><%- bookData.description %></p>
+    </div>
+  </div>
+</div>

@@ -1,3 +1,4 @@
+const Book = require("../models/Book");
 const Message = require("../models/Message");
 const Room = require("../models/Room")
 const User = require("../models/User")
@@ -22,10 +23,15 @@ exports.dashboard = async (req,res) => {
     })
 }
 exports.profilePage = async (req,res) => {
+    const userId = req.session.user.id
+    const getAllBooks = await Book.find({owner: userId}).populate('owner')
+    console.log(getAllBooks)
+    console.log(getAllBooks.length)
     res.render('user/profilePage', {
         title: 'Profile',
         layout: 'layouts/userLayout2',
-        user: req.session.user
+        user: req.session.user,
+        getAllBooks
     })
 }
 exports.settings = async (req,res) => {
@@ -182,6 +188,7 @@ exports.updateProfile = async (req, res) => {
 
 exports.directMessage = async (req, res) => {
     const { chat, targetUsername } = req.body;  
+    const userId = req.session.user?.id;
 
     try {
         const targetUser = await User.findOne({ username: targetUsername });
@@ -190,7 +197,7 @@ exports.directMessage = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });  
         }
         const message = new Message({
-            sender: user.id,  
+            sender: userId,  
             receiver: targetUser._id,  
             message: chat,  
             room: 'private'  
@@ -244,4 +251,40 @@ exports.updateSession = async (req, res) => {
     }
     
     res.status(200).json({ message: 'Session updated successfully' });
+};
+exports.uploadBook = async (req, res) => {
+    console.log(req.file); // untuk melihat apa yang diterima
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    const { title, author, genre, type, description } = req.body;
+    const userId = req.session.user.id;
+    const coverBook = req.file.path;
+    const genresArray = genre.split(',').map(g => g.trim());
+    const typesArray = type.split(',').map(t => t.trim());
+
+    const book = new Book({
+        title,
+        author,
+        genre: genresArray,
+        type: typesArray,
+        description,
+        cover: coverBook,
+        owner: userId
+    });
+
+    await book.save();
+    res.redirect('/profilePage');
+};
+exports.getDetailsBook = async (req, res) => {
+    // const userId = req.session.user.id;
+    const bookId = req.params.id;
+    const bookData = await Book.findById(bookId).populate('owner');
+    console.log(bookData)
+    res.render('user/detailsBook', {
+        title: 'Book Details',
+        layout: 'layouts/detailsLayout',
+        bookData
+    });
 };

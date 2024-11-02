@@ -21,6 +21,27 @@
           const fileName = input.files[0] ? input.files[0].name : "No file chosen";
           document.getElementById("file-name").textContent = fileName;
       }
+  
+      const formAddBook = document.querySelector('.form-add-book');
+      const addBookBtn = document.querySelector('.add-book i');
+  
+      addBookBtn.addEventListener('click', function(event) {
+          event.stopPropagation();
+          formAddBook.style.display = 'flex';
+      });
+  
+      function hideForm(e) {
+          if (formAddBook.style.display === 'flex' && !formAddBook.contains(e.target)) {
+              formAddBook.style.display = 'none';
+          }
+      }
+  
+      const fileInput = document.getElementById('file-input');
+      fileInput.addEventListener('click', function(event) {
+          event.stopPropagation(); 
+      });
+  
+      document.addEventListener('click', hideForm);
   </script>
   </body>
 </html>

@@ -1,6 +1,19 @@
 
     <main class="container">
         <div class="profile-container">
+            <div class="form-add-book">
+                <h1>Add Book</h1>
+                <form action="/uploadBook" method="post" enctype="multipart/form-data">
+                    <input type="text" placeholder="Title" required name="title"/>
+                    <input type="text" placeholder="Author" required name="author"/>
+                    <input type="text" placeholder="Genre" required name="genre"/>
+                    <input type="text" placeholder="Type" required name="type"/>
+                    <textarea placeholder="Description" maxlength="500" required name="description"></textarea>
+                    <input type="file" id="file-input" name="coverBook"/>
+                    <button type="submit">Add</button>
+                </form>
+                
+            </div>
             <div class="profile-header">
                 <div class="left">
                    <div class="left-top">
@@ -12,8 +25,8 @@
                     </div>
                 </div>
                 <div class="middle">
-                    <h1><i class='bx bx-book-alt'></i> Books : 100</h1>
-                    <h1><i class='bx bx-conversation'></i> Feedback 100%:</h1>
+                    <h1><i class='bx bx-book-alt'></i> Books : <%- getAllBooks.length %></h1>
+                    <h1><i class='bx bx-conversation'></i> Feedback : 100%:</h1>
                 </div>
                 <div class="right">
                     <h1><i class='bx bx-star' ></i> Ratings : 4.8</h1>
@@ -25,84 +38,26 @@
                     <i class='bx bx-plus-circle'></i>
                 </div>
                 <div class="books">
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
-                    <div class="book">
-                        <div class="book-img">
-                            <img src="img/icon.jpg" alt="Book" />
-                        </div>
-                        <div class="book-desc">
-                            <h1>Title</h1>
-                            <p>Type : Novel</p>
-                            <p>Author : Author</p>
-                            <p>Genre: Fantasy</p>
-                        </div>
-                    </div>
+                    <% if (getAllBooks.length === 0) { %>
+                        <p>No books yet</p>
+                    <% } else { %>
+                        <% getAllBooks.forEach(book => { %>
+                            <a href="details/<%- book._id %>">
+                                <div class="book">
+                                    <div class="book-img">
+                                        <img src="<%- book.cover %>" alt="Book" />
+                                    </div>
+                                    <div class="book-desc">
+                                        <h1><%- book.title %></h1>
+                                        <p><%- book.author %></p>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }); %>
+                    <% } %>
                 </div>
+                
+
             </div>
         </div>
     </main>

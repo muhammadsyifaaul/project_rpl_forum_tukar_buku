@@ -1,0 +1,58 @@
+
+  <div class="header">
+   <a href="/dashboard">
+    <i class='bx bx-undo'></i>
+   </a>
+   <div class="tabs">
+    <a class="active" href="/searchPage" onclick="clearBooks()">
+     Search
+    </a>
+    <a href="javascript:void(0);" onclick="showAllBook()">
+     All
+    </a>
+    <a href="javascript:void(0);" onclick="getAllTypes()">
+     Type
+    </a>
+    <a href="javascript:void(0);" onclick="getAllGenres()">
+     Genre
+    </a>
+   </div>
+  </div>
+  <div class="search-section">
+   <h2>
+    Search book
+   </h2>
+   <p>
+    You can search book you want below!
+   </p>
+   <form action="/searchBook" method="get">
+    <input placeholder="Search title, genre , author or anything you want" type="text" name="query"/>
+   </form>
+  </div>
+  <div class="content">
+    <div class="books">
+    <% if (!getAllBooks) { %>
+        <div>
+            <img alt="Illustration of a character waiting with a cup of coffee" height="100" src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-BVbpSZmLndA7MfHIxv2ahIKS/user-IBY8IaMXtVn7IVIdZeyvjx16/img-9x4dr5vJYNqlOgBLvGH2PdAe.png" width="100"/>
+            <p>Wumpus is waiting on friends. You don't have to, though!</p>
+        </div>
+    <% } else if (getAllBooks.length === 0) { %>
+        <p>No books yet</p>
+    <% } else { %>
+          <% getAllBooks.forEach(book => { %>
+            <a href="/detailsBook/<%= book._id %>">
+                <div class="book">
+                    <div class="book-img">
+                        <img src="<%= book.cover %>" alt="Book" />
+                    </div>
+                    <div class="book-desc">
+                        <h1><%= book.title %></h1>
+                        <p><%= book.author %></p>
+                    </div>
+                </div>
+            </a>
+        <% }); %>
+    <% } %>
+  </div>
+</div>
+

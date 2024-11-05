@@ -1,15 +1,25 @@
 const express = require('express');
-const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook} = require('../controllers/userController');
+const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook, searchPage, searchBook, getAllBooks, getDetailsBookVisitor, getUser, profileUser, getAllTypes, filterByType, getAllGenres, filterByGenre} = require('../controllers/userController');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 
 router.get('/dashboard', dashboard);
 router.get('/profilePage',profilePage)
+router.get('/profileUser/:username',profileUser)
 router.get('/settings',settings)
 router.get('/account',settings)
 router.get('/getAllDm',getAllDm)
 router.get('/details/:id',getDetailsBook)
+router.get('/detailsBook/:id',getDetailsBookVisitor)
+router.get('/filterByType/:type',filterByType)
+router.get('/filterByGenre/:genre',filterByGenre)
+router.get('/searchPage',searchPage)
+router.get('/searchBook',searchBook)
+router.get('/getAllBooks',getAllBooks)
+router.get('/getAllTypes',getAllTypes)
+router.get('/getAllGenres',getAllGenres)
+router.get('/getUser',getUser)
 router.post('/getMessage',getMessage)
 router.post('/addRoom',addRoom);
 router.post('/sendChat',sendChat)

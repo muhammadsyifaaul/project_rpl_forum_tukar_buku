@@ -24,13 +24,14 @@ exports.dashboard = async (req,res) => {
 }
 exports.profilePage = async (req,res) => {
     const userId = req.session.user.id
+    const user = await User.findById(userId)
     const getAllBooks = await Book.find({owner: userId}).populate('owner')
     console.log(getAllBooks)
     console.log(getAllBooks.length)
     res.render('user/profilePage', {
         title: 'Profile',
         layout: 'layouts/userLayout2',
-        user: req.session.user,
+        user,
         getAllBooks
     })
 }
@@ -287,4 +288,110 @@ exports.getDetailsBook = async (req, res) => {
         layout: 'layouts/detailsLayout',
         bookData
     });
+};
+exports.getDetailsBookVisitor = async (req, res) => {
+    // const userId = req.session.user.id;
+    const bookId = req.params.id;
+    const bookData = await Book.findById(bookId).populate('owner');
+    console.log(bookData)
+    res.render('user/detailsBookVisitor', {
+        title: 'Book Details',
+        layout: 'layouts/detailsLayout',
+        bookData
+    });
+};
+
+exports.searchPage = async (req,res) => {
+    let getAllBooks = null;
+    res.render('user/searchBook', {
+        title: 'Search',
+        layout: 'layouts/searchLayout',
+        user: req.session.user,
+        getAllBooks
+})
+}
+
+exports.searchBook = async(req,res) => {
+    const { query } = req.query; 
+
+    try {       
+        const books = await Book.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },  
+                { genre: { $regex: query, $options: 'i' } },
+                { author: { $regex: query, $options: 'i' } }
+            ]
+        }).populate('owner');
+
+        res.render('user/searchBook', {
+            title: 'Search',
+            layout: 'layouts/searchLayout',
+            user: req.session.user,
+            getAllBooks : books
+        });
+        
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+}
+
+exports.getAllBooks = async (req, res) => {
+    const getAllBooks = await Book.find().populate('owner');
+    res.status(200).json({data: getAllBooks});
+}
+exports.getUser = async (req, res) => {
+    try {
+        const { ownerName } = req.query; 
+        const trimmedOwnerName = ownerName.trim();
+        const user = await User.findOne({ username: trimmedOwnerName }); 
+        console.log(user)
+        if (user) {
+            res.json({ data : user }); 
+        } else {
+            res.status(404).json({ message: 'User not found' }); 
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' }); 
+    }
+};
+
+exports.profileUser = async(req,res) => {
+    const { username } = req.params;
+    const findUser = await User.findOne({ username: username });
+    console.log(findUser)
+    const getAllBooks = await Book.find({owner: findUser._id}).populate('owner')
+    res.render('user/profileUser', {
+        title: 'Profile User',
+        layout: 'layouts/profileLayout',
+        findUser,
+        getAllBooks
+    })
+}
+
+exports.getAllTypes = async (req, res) => {
+    const getAllTypes = await Book.distinct('type');
+    res.status(200).json({data : getAllTypes});
+}
+
+exports.filterByType = async (req, res) => {
+    const { type } = req.params;
+    console.log("Query Type:", type); 
+    const books = await Book.find({ type: { $in: [type] } }).populate('owner');
+    console.log("Filtered Books:", books);
+    res.status(200).json({ data: books });
+};
+
+exports.getAllGenres = async (req, res) => {
+    const getAllGenres = await Book.distinct('genre');
+    res.status(200).json({data :getAllGenres});
+}
+
+exports.filterByGenre = async (req, res) => {
+    const { genre } = req.params;
+    console.log("Query Genre:", genre);
+    const books = await Book.find({ genre: { $in: [genre] } }).populate('owner');
+    console.log("Filtered Books:", books);
+    res.status(200).json({ data: books });
 };

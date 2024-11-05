@@ -1,25 +1,17 @@
 
     <main class="container">
+        
         <div class="profile-container">
-            <div class="form-add-book">
-                <h1>Add Book</h1>
-                <form action="/uploadBook" method="post" enctype="multipart/form-data">
-                    <input type="text" placeholder="Title" required name="title"/>
-                    <input type="text" placeholder="Author" required name="author"/>
-                    <input type="text" placeholder="Genre" required name="genre"/>
-                    <input type="text" placeholder="Type" required name="type"/>
-                    <textarea placeholder="Description" maxlength="500" required name="description"></textarea>
-                    <input type="file" id="file-input" name="coverBook"/>
-                    <button type="submit">Add</button>
-                </form>
-                
-            </div>
+
             <div class="profile-header">
                 <div class="left">
                    <div class="left-top">
-                    <img src="<%- user.avatar || 'img/icon.jpg' %>" alt="Profile" />
-                    <h1><%- user.displayName || user.username %></h1>
+                    <img src="/<%- findUser.avatar || '/img/icon.jpg' %>" alt="Profile" />
+                    <h1><%- findUser.username %></h1>
                    </div>
+                    <div class="left-bottom">
+                        <a href="javascript:void(0)">Chat</a>
+                    </div>
                 </div>
                 <div class="middle">
                     <h1><i class='bx bx-book-alt'></i> Books : <%- getAllBooks.length %></h1>
@@ -31,18 +23,15 @@
                 </div>
             </div>
             <div class="profile-content">
-                <div class="add-book">
-                    <i class='bx bx-plus-circle'></i>
-                </div>
                 <div class="books">
                     <% if (getAllBooks.length === 0) { %>
                         <p>No books yet</p>
                     <% } else { %>
                         <% getAllBooks.forEach(book => { %>
-                            <a href="details/<%- book._id %>">
+                            <a href="/detailsBook/<%- book._id %>">
                                 <div class="book">
                                     <div class="book-img">
-                                        <img src="<%- book.cover %>" alt="Book" />
+                                        <img src="/<%- book.cover %>" alt="Book" />
                                     </div>
                                     <div class="book-desc">
                                         <h1><%- book.title %></h1>

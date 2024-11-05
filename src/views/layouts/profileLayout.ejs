@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%- title %></title>
+
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/style1.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="direct-msg-form" style="display: none">
+      <div class="top-section">
+        <img src="img/icon.jpg" alt="" />
+      </div>
+      <div class="bottom-section">
+        <h1>Display Name</h1>
+        <h1>Username</h1>
+        <a href="">Profile</a>
+        <form action="/directMessage" method="post" id="dmForm">
+          <input
+            type="text"
+            placeholder="Message @username"
+            id="directMessageInput"
+            name="message"
+          />
+          <input type="hidden" name="targetUsername" id="targetUsername" />
+        </form>
+      </div>
+    </div>
+    <%- body %>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const toggleForm = document.querySelector(".left-bottom");
+      const dmFormContainer = document.querySelector(".direct-msg-form");
+      const dmMsgInput = document.getElementById("directMessageInput");
+      const targetUsernameInput = document.getElementById("targetUsername");
+      const dmForm = document.getElementById("dmForm");
+      let userForm = null; 
+
+      if (toggleForm) {
+        toggleForm.addEventListener("click", (e) => {
+          e.stopPropagation();
+          dmFormContainer.style.display = "flex";
+          if (userForm) getAllChats(userForm);
+          document.addEventListener("click", hideForm);
+        });
+      } else {
+        console.error("Element with class '.left-bottom' not found.");
+      }
+
+      axios
+        .get("/getUser", {
+          params: {
+            ownerName: document.querySelector(".left-top h1").textContent,
+          },
+        })
+        .then((response) => {
+          userForm = response.data.data;
+          getAllChats(userForm);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+
+      dmForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const message = dmMsgInput.value;
+        const targetUsername = targetUsernameInput.value;
+
+        fetch("/directMessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat: message,
+            targetUsername: targetUsername,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Pesan berhasil dikirim:", data);
+          })
+          .catch((error) => {
+            console.error("Gagal mengirim pesan:", error);
+          });
+
+        dmFormContainer.style.display = "none";
+        document.removeEventListener("click", hideForm);
+      });
+
+      function getAllChats(userForm) {
+        const displayNameField =
+          dmFormContainer.querySelector("h1:nth-child(1)");
+        const usernameField = dmFormContainer.querySelector("h1:nth-child(2)");
+        const profileNav = dmFormContainer.querySelector("a");
+        const imgProfile = dmFormContainer.querySelector(".top-section img");
+
+        displayNameField.textContent = userForm.displayName;
+        usernameField.textContent = userForm.username;
+        dmMsgInput.placeholder = `Message @${userForm.username}`;
+        targetUsernameInput.value = userForm.username;
+        profileNav.href = `/profileUser/${userForm.username}`;
+        imgProfile.src = userForm.avatar
+          ? `/${userForm.avatar.replace(/\\/g, "/")}`
+          : "img/icon.jpg";
+      }
+
+      function hideForm(e) {
+        if (!dmFormContainer.contains(e.target) && e.target !== toggleForm) {
+          dmFormContainer.style.display = "none";
+          document.removeEventListener("click", hideForm);
+        }
+      }
+    </script>
+  </body>
+</html>

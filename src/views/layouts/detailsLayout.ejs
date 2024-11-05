@@ -98,9 +98,180 @@
             text-align: justify;
             line-height: 1.6;
         }
+        .direct-msg-form {
+        background: linear-gradient(180deg, #71624f 40%, #111214 30%);
+        width: 20%;
+        height: 50vh;
+        padding: 0.6rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+        flex-direction: column;
+        justify-content: space-around;
+        border-radius: 8px;
+      }
+      .top-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 0.5rem;
+        color: #ffffff;
+      }
+      .top-section img {
+        width: 5vw;
+        border-radius: 50%;
+        border: 5px solid #1e1f22;
+      }
+      .bottom-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5rem;
+        color: #ffffff;
+      }
+      .bottom-section a {
+        text-decoration: none;
+        width: 100%;
+        padding: 0.5rem;
+        text-align: center;
+        border-radius: 4px;
+        background-color: #2f9e44;
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .bottom-section h1 {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      .bottom-section h1:nth-child(1) {
+          margin-bottom: -1rem;
+      }
+      .bottom-section a:hover {
+        background-color: #248046;
+        transition: 0.3s all ease;
+      }
+      .bottom-section form {
+        width: 104%;
+        display: flex;
+        justify-content: center;
+      }
+      .bottom-section input {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        background-color: #313338;
+        color: #fff;
+      }
+      .bottom-section input::placeholder {
+        text-align: center;
+      }
   </style>
  </head>
  <body>
     <%- body %>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const owner = document.getElementById('owner');
+        const ownerName = document.querySelector('#owner a').textContent
+        
+const dmForm = document.getElementById('dmForm');
+const dmMsgInput = document.getElementById('directMessageInput');
+const targetUsernameInput = document.getElementById('targetUsername');
+const dmFormContainer = document.querySelector('.direct-msg-form');
+
+    let userForm;
+
+
+axios.get('/getUser',{
+        params: {
+            ownerName: ownerName
+        }
+    })
+    .then(response => {
+        const user = response.data;
+        console.log(user);
+        userForm = user;
+
+    })
+    .catch(error => {
+        console.error(error);
+    })
+owner.addEventListener('click', (e) => {
+    e.stopPropagation(); 
+    
+
+    dmFormContainer.style.display = 'flex';
+    getAllChats(userForm);
+    document.addEventListener('click', hideForm);
+});
+
+dmForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = dmMsgInput.value;
+    const targetUsername = targetUsernameInput.value;
+
+    fetch('/directMessage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            chat: message,
+            targetUsername: targetUsername,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Pesan berhasil dikirim:', data);
+    })
+    .catch(error => {
+        console.error('Gagal mengirim pesan:', error);
+    });
+    dmFormContainer.style.display = 'none';
+    document.removeEventListener('click', hideForm); 
+});
+
+function getAllChats(userForm) {
+    const dmForm = document.querySelector('.direct-msg-form');
+    const displayNameField = dmForm.querySelector('h1:nth-child(1)');
+    const usernameField = dmForm.querySelector('h1:nth-child(2)');
+    const messageInput = dmForm.querySelector('input[type="text"]');
+    const targetUsernameInput = document.getElementById('targetUsername');
+    const imgProfile = document.querySelector('.top-section img');
+    const profileNav = document.querySelector('.bottom-section a');
+
+
+
+            // const displayName = chat.dataset.displayname;
+            // const username = chat.dataset.username;
+
+            displayNameField.textContent = userForm.data.displayName;
+            usernameField.textContent = userForm.data.username;
+            messageInput.placeholder = `Message @${userForm.data.username}`;
+            targetUsernameInput.value = userForm.data.username;
+            profileNav.href = `/profileUser/${userForm.data.username}`
+
+            imgProfile.src = userForm.data.avatar ? `/${userForm.data.avatar.replace(/\\/g, '/')}` : 'img/icon.jpg';
+
+
+            dmForm.style.display = 'flex';
+
+}
+
+function hideForm(e) {
+    if (!dmFormContainer.contains(e.target) && e.target !== owner) {
+        dmFormContainer.style.display = 'none';
+        document.removeEventListener('click', hideForm); 
+    }
+}
+
+    </script>
  </body>
  </html>

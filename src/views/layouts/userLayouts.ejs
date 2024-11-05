@@ -13,7 +13,9 @@
     />
   </head>
   <body>
-    <aside><%- include('navSide') %> <%- include('rooms') %></aside>
+    <aside><%- include('navSide') %> 
+        <div id="rooms"><%- include('rooms') %></div>
+    </aside>
     <%- body %>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -28,6 +30,7 @@
     let currentRoom = '';
     let roomType
     let users = <%- JSON.stringify(users) %>;
+    
 
     chatForm.addEventListener('submit', (e) => {
         e.preventDefault();

@@ -1,0 +1,384 @@
+<html>
+  <head>
+    <title>Search Book</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #2f3136;
+        color: #b9bbbe;
+      }
+
+      ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 10px;
+        border: 3px solid #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+      }
+
+      .container {
+        padding: 20px;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        background-color: #36393f;
+        padding: 10px 20px;
+        border-bottom: 1px solid #202225;
+      }
+      .header .plus-icon {
+        font-size: 24px;
+        color: #b9bbbe;
+        margin-right: 20px;
+      }
+      .header .tabs {
+        display: flex;
+        gap: 20px;
+      }
+      .header .tabs a {
+        color: #b9bbbe;
+        text-decoration: none;
+        font-size: 16px;
+      }
+      .header .tabs a.active {
+        color: #fff;
+        border-bottom: 2px solid #fff;
+      }
+      .search-section {
+        padding: 20px;
+        background-color: #36393f;
+        border-bottom: 1px solid #202225;
+      }
+      .search-section h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #fff;
+      }
+      .search-section p {
+        margin: 5px 0 20px;
+        font-size: 14px;
+      }
+      .search-section input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #202225;
+        border-radius: 5px;
+        background-color: #2f3136;
+        color: #b9bbbe;
+        font-size: 14px;
+      }
+      .content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 160px);
+        color: #b9bbbe;
+        text-align: center;
+      }
+      .content img {
+        max-width: 100px;
+        margin-bottom: 20px;
+      }
+      .header a i {
+        color: #b9bbbe;
+        font-size: 2rem;
+        margin-right: 1rem;
+      }
+      .header a i:hover {
+        color: #fff;
+      }
+      .header a i:active {
+        color: #b9bbbe;
+      }
+      .header a i:visited {
+        color: #b9bbbe;
+      }
+      .books a {
+        text-decoration: none;
+      }
+      .books {
+        width: 90%;
+        padding: 1rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .book {
+        background-color: #fff;
+        margin: 0;
+        padding: 0.5rem 0.2rem;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-evenly;
+        border-radius: 4px;
+        height: 30vh;
+        width: 10vw;
+      }
+      .book:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        background-color: #8a8787;
+        transition: all 0.4s ease-in-out;
+      }
+
+      .book:hover .book-img img {
+        filter: brightness(0.8);
+        transition: filter 0.4s ease-in-out;
+      }
+
+      .book-img {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+      }
+
+      .book-img img {
+        width: 100%;
+        height: auto;
+        border-radius: 7px;
+      }
+
+      .book-desc {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.2rem;
+        align-items: center;
+      }
+
+      .book-desc h1 {
+        font-size: 1rem;
+        margin-bottom: -0.5rem;
+        font-weight: 600;
+        color: #1a4ab1;
+      }
+      .book-desc p {
+        font-size: 0.6rem;
+        font-weight: 500;
+        color: #383838;
+      }
+      .filter-section {
+        width: 100%;
+        display: flex;
+      }
+      .filter-section ul {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0;
+      }
+      .filter-section ul li a{
+        text-decoration: none;
+        padding: 0.5rem;
+        background-color: #1a4ab1;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 8px;
+      }
+      .search-section a {
+        text-decoration: none;
+        color: #fff;
+        font-weight: 500;
+        background-color: #1a4ab1;
+        padding: 0.5rem;
+        border-radius: 8px;
+      }
+      
+    </style>
+  </head>
+
+  <body>
+    
+    <%- body %>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const tabs = document.querySelectorAll(".tabs a");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", (e) => {
+          e.preventDefault();
+          tabs.forEach((tab) => {
+            tab.classList.remove("active");
+          });
+          tab.classList.add("active");
+        });
+      });
+      function showAllBook() {
+        axios.get("/getAllBooks")
+          .then((res) => {
+            const books = res.data.data;
+            const booksContainer = document.querySelector(".books");
+            booksContainer.innerHTML = "";
+            books.forEach((book) => {
+              console.log(book);
+              console.log(book._id);
+              const anchor = document.createElement("a");
+              anchor.href = `/detailsBook/${book._id}`;
+              anchor.innerHTML = `
+              <div class="book">
+                    <div class="book-img">
+                        <img src="${book.cover}" alt="Book" />
+                    </div>
+                    <div class="book-desc">
+                        <h1>${book.title}</h1>
+                        <p>${book.author}</p>
+                    </div>
+                </div>
+              `;
+              booksContainer.appendChild(anchor);
+            });
+            const filterBar = document.querySelector(".search-section");
+      filterBar.innerHTML = `
+        <h2>
+          Search book
+        </h2>
+        <p>
+          You can search book you want below!
+        </p>
+        <form action="/searchBook" method="get">
+            <input placeholder="Search title, genre , author or anything you want" type="text" name="query"/>
+        </form>
+        `;
+          })
+          .catch((error) => {
+            console.error("Error fetching books:", error);
+          });
+      }
+
+      function clearBooks() {
+        const filterBar = document.querySelector(".search-section");
+      filterBar.innerHTML = `
+        <h2>
+          Search book
+        </h2>
+        <p>
+          You can search book you want below!
+        </p>
+        <form action="/searchBook" method="get">
+            <input placeholder="Search title, genre , author or anything you want" type="text" name="query"/>
+        </form>
+        `;
+        const booksContainer = document.querySelector(".books");
+        booksContainer.innerHTML = `<div>
+            <img alt="Illustration of a character waiting with a cup of coffee" height="100" src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-BVbpSZmLndA7MfHIxv2ahIKS/user-IBY8IaMXtVn7IVIdZeyvjx16/img-9x4dr5vJYNqlOgBLvGH2PdAe.png" width="100"/>
+            <p>Wumpus is waiting on friends. You don't have to, though!</p>
+        </div>`;
+      }
+      function getAllTypes() {
+  axios.get("/getAllTypes")
+    .then((res) => {
+      const types = res.data.data; 
+      const filterBar = document.querySelector(".search-section");
+      filterBar.innerHTML = ''; 
+
+      types.forEach((type) => {
+        filterBar.innerHTML += `
+
+                <a href="javascript:void(0);" class="filter-btn" onclick="filterByType('${type}')">${type}</a>
+        `;
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching types:", error);
+    });
+   } 
+   function filterByType(type) {
+    axios.get(`/filterByType/${type}`)
+      .then((res) => {
+      const books = res.data.data;
+      console.log(books);
+      const booksContainer = document.querySelector(".books");
+      booksContainer.innerHTML = '';
+      books.forEach((book) => {
+        console.log(book);
+        console.log(book._id);
+        const anchor = document.createElement("a");
+        anchor.href = `/detailsBook/${book._id}`;
+        anchor.innerHTML = `
+        <div class="book">
+              <div class="book-img">
+                  <img src="${book.cover}" alt="Book" />
+              </div>
+              <div class="book-desc">
+                  <h1>${book.title}</h1>
+                  <p>${book.author}</p>
+              </div>
+          </div>
+        `;
+        booksContainer.appendChild(anchor);
+      });
+    })
+   }
+   function getAllGenres() {
+    axios.get('/getAllGenres')
+    .then((res) => {
+        const genres = res.data.data;
+        const filterBar = document.querySelector(".search-section");
+        filterBar.innerHTML = '';
+        genres.forEach((genre) => {
+            filterBar.innerHTML += `
+                <a href="javascript:void(0);" class="filter-btn" onclick="filterByGenre('${genre}')">${genre}</a>
+            `;
+        });
+    })
+    .catch((error) => {
+        console.error("Error fetching genres:", error);
+    });
+   }
+   function filterByGenre(genre) {
+    axios.get(`/filterByGenre/${genre}`)
+    .then((res) => {
+        const books = res.data.data;
+        const booksContainer = document.querySelector(".books");
+        booksContainer.innerHTML = '';
+        books.forEach((book) => {
+            console.log(book);
+            console.log(book._id);
+            const anchor = document.createElement("a");
+            anchor.href = `/detailsBook/${book._id}`;
+            anchor.innerHTML = `
+            <div class="book">
+                  <div class="book-img">
+                      <img src="${book.cover}" alt="Book" />
+                  </div>
+                  <div class="book-desc">
+                      <h1>${book.title}</h1>
+                      <p>${book.author}</p>
+                  </div>
+              </div>
+            `;
+            booksContainer.appendChild(anchor);
+        });
+    })
+    .catch((error) => {
+        console.error("Error fetching books:", error);
+    });
+   }
+
+    </script>
+  </body>
+</html>

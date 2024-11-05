@@ -252,17 +252,7 @@
               booksContainer.appendChild(anchor);
             });
             const filterBar = document.querySelector(".search-section");
-      filterBar.innerHTML = `
-        <h2>
-          Search book
-        </h2>
-        <p>
-          You can search book you want below!
-        </p>
-        <form action="/searchBook" method="get">
-            <input placeholder="Search title, genre , author or anything you want" type="text" name="query"/>
-        </form>
-        `;
+      filterBar.innerHTML = ``;
           })
           .catch((error) => {
             console.error("Error fetching books:", error);
@@ -284,7 +274,7 @@
         `;
         const booksContainer = document.querySelector(".books");
         booksContainer.innerHTML = `<div>
-            <img alt="Illustration of a character waiting with a cup of coffee" height="100" src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-BVbpSZmLndA7MfHIxv2ahIKS/user-IBY8IaMXtVn7IVIdZeyvjx16/img-9x4dr5vJYNqlOgBLvGH2PdAe.png" width="100"/>
+            <img alt="Illustration of a character waiting with a cup of coffee" height="100" src="img/wumpus.png" width="100"/>
             <p>Wumpus is waiting on friends. You don't have to, though!</p>
         </div>`;
       }

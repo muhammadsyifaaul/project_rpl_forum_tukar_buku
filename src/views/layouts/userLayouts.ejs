@@ -294,10 +294,14 @@ document.getElementById("addRoomForm").addEventListener("submit", async function
 });
 function getAllChats(chats) {
     const dmForm = document.querySelector('.direct-msg-form');
+    if (!dmForm) return;
+
     const displayNameField = dmForm.querySelector('h1:nth-child(1)');
     const usernameField = dmForm.querySelector('h1:nth-child(2)');
     const messageInput = dmForm.querySelector('input[type="text"]');
     const targetUsernameInput = document.getElementById('targetUsername');
+    const imgProfile = document.querySelector('.top-section img');
+    const profileNav = document.querySelector('.bottom-section a');
 
     chats.forEach(chat => {
         chat.addEventListener('click', function(e) {
@@ -305,16 +309,34 @@ function getAllChats(chats) {
             const displayName = chat.dataset.displayname;
             const username = chat.dataset.username;
 
-            displayNameField.textContent = displayName;
-            usernameField.textContent = username;
-            messageInput.placeholder = `Message @${username}`;
-            targetUsernameInput.value = username;
+            axios.get('/getUser', {
+                params: { ownerName: username }
+            })
+            .then(response => {
+                const user = response.data;
+                console.log(user);
+
+                // Periksa apakah avatar tersedia
+                imgProfile.src = user.data?.avatar 
+                    ? `/${user.data.avatar.replace(/\\/g, '/')}` 
+                    : 'img/icon.jpg';
+
+                profileNav.href = `/profileUser/${user.data.username}`
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error);
+            });
+
+            if (displayNameField) displayNameField.textContent = displayName;
+            if (usernameField) usernameField.textContent = username;
+            if (messageInput) messageInput.placeholder = `Message @${username}`;
+            if (targetUsernameInput) targetUsernameInput.value = username;
 
             dmForm.style.display = 'flex';
         });
     });
-
 }
+
     const dmForm = document.getElementById('dmForm');
     const dmMsgInput = document.getElementById('directMessageInput');
     const targetUsernameInput = document.getElementById('targetUsername');

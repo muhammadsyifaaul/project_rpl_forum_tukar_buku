@@ -3,7 +3,7 @@
     <div class="account">
         <form class="detail-account" action="/updateProfile" method="post" enctype="multipart/form-data">
             <label for="display-name">Display Name</label>
-            <input type="text" name="displayName" id="display-name" placeholder="Display name" value="<%- findUser.displayName || 'Enter your display name' %>">
+            <input type="text" name="displayName" id="display-name" placeholder="Display name" value="<%- findUser.displayName || 'not set' %>">
             
             <label for="username">Username</label>
             <input type="text" name="username" id="username" placeholder="username" value="<%- findUser.username || 'Enter your username' %>">

@@ -4,8 +4,10 @@ const http = require('http');
 const socketIo = require('socket.io');
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
+const methodOverride = require('method-override');
 const sharedSession = require('express-socket.io-session'); // For sharing session between express and socket.io
 const multer = require('multer')
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const server = http.createServer(app);  
@@ -21,7 +23,8 @@ app.set('views', path.join(__dirname, 'src/views'));
 app.set('layout', 'layouts/layout');
 app.use(express.static(path.join(__dirname, 'src/public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use(cookieParser());
+app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: true }));
 app.use(expressLayouts);
 app.use(express.json());
@@ -34,27 +37,27 @@ const sessionMiddleware = session({
     cookie: { secure: false } 
 });
 
-// Use session middleware in express
+
 app.use(sessionMiddleware);
 
-// Connect to DB
+
 connectDb();
 
 
-// Use routes
+
 app.use(authRoutes);
 app.use(userRoutes);
 
-// Share session middleware between express and socket.io
+
 io.use(sharedSession(sessionMiddleware, {
-    autoSave: true // Automatically save session changes
+    autoSave: true 
 }));
 
-// Socket.io connection
+
 io.on('connection', (socket) => {
     console.log('User connected');
 
-    // Use session to get username when receiving chat message
+
     socket.on('chatMessage', (msg) => {
         const user = socket.handshake.session.user;
         const username = user ? user.username : 'Unknown User';

@@ -15,33 +15,96 @@
   <body>
     <aside><%- include('profileNav') %></aside>
     <%- body %>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       function showFileName(input) {
-          const fileName = input.files[0] ? input.files[0].name : "No file chosen";
-          document.getElementById("file-name").textContent = fileName;
+        const fileName = input.files[0]
+          ? input.files[0].name
+          : "No file chosen";
+        document.getElementById("file-name").textContent = fileName;
       }
-  
-      const formAddBook = document.querySelector('.form-add-book');
-      const addBookBtn = document.querySelector('.add-book i');
-  
-      addBookBtn.addEventListener('click', function(event) {
-          event.stopPropagation();
-          formAddBook.style.display = 'flex';
+
+      const formAddBook = document.querySelector(".form-add-book");
+      const formEditBook = document.querySelector(".form-edit-book");
+      const addBookBtn = document.querySelector(".add-book i");
+      const editBtn = document.querySelector(".edit");
+
+      addBookBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        formAddBook.style.display = "flex";
       });
-  
+
       function hideForm(e) {
-          if (formAddBook.style.display === 'flex' && !formAddBook.contains(e.target)) {
-              formAddBook.style.display = 'none';
-          }
+        if (
+          formAddBook.style.display === "flex" &&
+          !formAddBook.contains(e.target)
+        ) {
+          formAddBook.style.display = "none";
+        }
       }
-  
-      const fileInput = document.getElementById('file-input');
-      fileInput.addEventListener('click', function(event) {
-          event.stopPropagation(); 
+      editBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        formEditBook.style.display = "flex";
+        formEditBook.style.zIndex = "222";
       });
-  
-      document.addEventListener('click', hideForm);
-  </script>
+
+      function hideForm2(e) {
+        if (
+          formEditBook.style.display === "flex" &&
+          !formEditBook.contains(e.target)
+        ) {
+          formEditBook.style.display = "none";
+          formEditBook.style.zIndex = "0";
+        }
+      }
+
+      const fileInput = document.getElementById("file-input");
+      fileInput.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      document.addEventListener("click", hideForm);
+      document.addEventListener("click", hideForm2);
+      function confirmDelete(id) {
+        const isConfirmed = confirm(
+          "Apakah Anda yakin ingin menghapus buku ini?"
+        );
+
+        if (isConfirmed) {
+          deleteBook(id);
+        }
+      }
+
+      function deleteBook(id) {
+        console.log(id);
+        axios
+          .delete(`/deleteBook/${id}`)
+          .then((response) => {
+            console.log("Buku berhasil dihapus");
+            window.location.reload();
+          })
+          .catch((error) => {
+            window.location.reload();
+          });
+      }
+      function editBook(id, title, author, genre, type, description) {
+        document.querySelector('.form-edit-book form input[name="title"]').value = title;
+        document.querySelector('.form-edit-book form input[name="author"]').value = author;
+        document.querySelector('.form-edit-book form input[name="genre"]').value = genre;
+        document.querySelector('.form-edit-book form input[name="type"]').value = type;
+        document.querySelector('.form-edit-book form textarea[name="description"]').value =
+          description;
+        document.querySelector('.form-edit-book form input[name="id"]').value = id;
+
+        console.log("Data untuk edit:", {
+          id,
+          title,
+          author,
+          genre,
+          type,
+          description,
+        });
+      }
+    </script>
   </body>
 </html>

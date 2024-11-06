@@ -5,6 +5,7 @@ const User = require("../models/User")
 
 exports.dashboard = async (req,res) => {
     const user = req.session.user;
+    console.log(user)
     const provinces = await Room.find()
     const rooms = await Room.find({ users: user.id });
     const users = await User.findById(user.id)
@@ -12,6 +13,12 @@ exports.dashboard = async (req,res) => {
     if (!req.session.user) {
         return res.redirect('/login'); 
     }
+
+    res.cookie('username', user.username, { 
+        maxAge: 24 * 60 * 60 * 1000, 
+        httpOnly: false, 
+        secure: false 
+    });
     
     res.render('user/chatPage', {
         title: 'Dashboard',
@@ -395,3 +402,44 @@ exports.filterByGenre = async (req, res) => {
     console.log("Filtered Books:", books);
     res.status(200).json({ data: books });
 };
+
+exports.deleteBook = async (req,res) => {
+    const {id} = req.params;
+    await Book.findByIdAndDelete(id);
+    res.redirect('/profilePage');
+}
+
+
+
+exports.editBook = async (req, res) => {
+    const { id, title, author, genre, type, description } = req.body;
+    if (!id) {
+        console.error("No ID provided in request body");
+        return res.status(400).send("Book ID is missing.");
+    }
+
+    try {
+        const coverBook = req.file ? req.file.path : null;
+        const genresArray = typeof genre === 'string' ? genre.split(',').map(g => g.trim()) : genre;
+        const typesArray = typeof type === 'string' ? type.split(',').map(t => t.trim()) : type;
+
+        const book = await Book.findByIdAndUpdate(id, {
+            title,
+            author,
+            genre: genresArray,
+            type: typesArray,
+            description,
+            cover: coverBook
+        });
+
+        if (!book) {
+            return res.status(404).send('Book not found');
+        }
+
+        res.redirect('/profilePage');
+    } catch (error) {
+        console.error('Error updating book:', error);
+        res.status(500).send('An error occurred while updating the book');
+    }
+};
+

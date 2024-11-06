@@ -1,5 +1,5 @@
 const express = require('express');
-const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook, searchPage, searchBook, getAllBooks, getDetailsBookVisitor, getUser, profileUser, getAllTypes, filterByType, getAllGenres, filterByGenre} = require('../controllers/userController');
+const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook, searchPage, searchBook, getAllBooks, getDetailsBookVisitor, getUser, profileUser, getAllTypes, filterByType, getAllGenres, filterByGenre, deleteBook, editBook} = require('../controllers/userController');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
@@ -22,10 +22,13 @@ router.get('/getAllGenres',getAllGenres)
 router.get('/getUser',getUser)
 router.post('/getMessage',getMessage)
 router.post('/addRoom',addRoom);
+router.delete('/deleteBook/:id',deleteBook)
 router.post('/sendChat',sendChat)
 router.post('/directMessage',directMessage)
 router.post('/getMsgById',getMsgById)
 router.post('/updateSession',updateSession)
+
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/'); 
@@ -55,4 +58,5 @@ const upload = multer({
 
 router.post('/updateProfile', upload.single('avatar'), updateProfile);
 router.post('/uploadBook',upload.single('coverBook'),uploadBook);
+router.put('/editBook',upload.single('coverBook'), editBook)
 module.exports = router;

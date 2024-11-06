@@ -21,6 +21,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
+        
     const socket = io();
     const messageInput = document.getElementById('messageInput');
     const messageArea = document.getElementById('messageArea');
@@ -292,6 +293,30 @@ document.getElementById("addRoomForm").addEventListener("submit", async function
         iconChat.addEventListener('click', () => {
         roomName.innerHTML = 'Direct Message';
 });
+
+
+function getCookieValue(cookieName) {
+  // Mendapatkan semua cookie dalam bentuk string
+  const cookies = document.cookie;
+  
+  // Memisahkan cookie menjadi array berdasarkan tanda titik koma
+  const cookieArray = cookies.split(';');
+
+  // Mencari cookie dengan nama yang sesuai
+  for (let i = 0; i < cookieArray.length; i++) {
+    let cookie = cookieArray[i].trim(); // Menghapus spasi di sekitar cookie
+    if (cookie.startsWith(cookieName + '=')) {
+      // Mengambil nilai cookie setelah '='
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null; // Jika cookie tidak ditemukan
+}
+
+// Mengambil nilai cookie 'username'
+const usernameCookie = getCookieValue('username');
+
+
 function getAllChats(chats) {
     const dmForm = document.querySelector('.direct-msg-form');
     if (!dmForm) return;
@@ -303,12 +328,21 @@ function getAllChats(chats) {
     const imgProfile = document.querySelector('.top-section img');
     const profileNav = document.querySelector('.bottom-section a');
 
+
     chats.forEach(chat => {
         chat.addEventListener('click', function(e) {
             e.stopPropagation();
             const displayName = chat.dataset.displayname;
             const username = chat.dataset.username;
 
+
+            if (usernameCookie === username) {
+
+                dmForm.style.display = 'none';
+                return;
+            }
+
+  
             axios.get('/getUser', {
                 params: { ownerName: username }
             })
@@ -316,12 +350,11 @@ function getAllChats(chats) {
                 const user = response.data;
                 console.log(user);
 
-                // Periksa apakah avatar tersedia
                 imgProfile.src = user.data?.avatar 
                     ? `/${user.data.avatar.replace(/\\/g, '/')}` 
                     : 'img/icon.jpg';
 
-                profileNav.href = `/profileUser/${user.data.username}`
+                profileNav.href = `/profileUser/${user.data.username}`;
             })
             .catch(error => {
                 console.error("Error fetching user data:", error);
@@ -336,6 +369,8 @@ function getAllChats(chats) {
         });
     });
 }
+
+
 
     const dmForm = document.getElementById('dmForm');
     const dmMsgInput = document.getElementById('directMessageInput');

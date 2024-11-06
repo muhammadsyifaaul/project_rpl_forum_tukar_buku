@@ -32,9 +32,11 @@ aside {
     border-radius: 50%;
     transition: all 0.5s ease;
 }
-.nav-item .icon:hover {
-    border-radius: 40%;
+.nav-room a:hover{
+    background-color: #2f9e44;
+    transition: all 0.5s ease;
 }
+
 
 .white-expand {
     position: absolute;
@@ -417,6 +419,7 @@ main {
 }
 .books a {
     text-decoration: none;
+    position: relative;
 }
 .book {
     background-color: #fff;
@@ -425,11 +428,44 @@ main {
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 0.5rem;
+    justify-content: flex-start;
+    gap: 1rem;
     border-radius: 4px;
     height: 30vh;
     width: 10vw;
+    position: relative;
+}
+.book .remove {
+    border: none;
+    position: absolute;
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: 500;
+    padding: 0.01rem 0.7rem;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: #e2e0e0;
+    cursor: pointer;
+    margin: 0;
+}
+.book .edit {
+    border: none;
+    position: absolute;
+    text-decoration: none;
+    font-size: 1.3rem;
+    padding: 0.3rem 0.2rem;
+    top: 0;
+    left: 0;
+    background-color: #00e1ff;
+    color: #e2e0e0;
+    cursor: pointer;
+    margin: 0;
+}
+.book .remove:hover {
+    background-color: #770a0a;
+    color: #fff;
+    transition: 0.3s all ease;
 }
 .book-img {
     width: 100%;
@@ -765,6 +801,68 @@ main {
     cursor: pointer;
 }
 .form-add-book button:hover {
+    background-color: #333335;
+}
+.form-edit-book {
+    width: 50%;
+    height: 70%;
+    position: absolute;
+    background-color: #2b2b2b;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+}
+.form-edit-book h1 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+.form-edit-book form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+.form-edit-book input {
+    width: 90%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    background-color: #1c1c1d;
+    color: #fff;
+}
+.form-edit-book form textarea {
+    width: 90%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    background-color: #1c1c1d;
+    color: #fff;
+}
+.form-edit-book button {
+    width: 50%;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    background-color: #1c1c1d;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.form-edit-book button:hover {
     background-color: #333335;
 }
 .search-icon a {

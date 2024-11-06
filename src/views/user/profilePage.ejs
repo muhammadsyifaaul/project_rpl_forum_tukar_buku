@@ -14,6 +14,20 @@
                 </form>
                 
             </div>
+            <div class="form-edit-book">
+                <h1>Edit Book</h1>
+                <form action="/editBook?_method=PUT" method="post" enctype="multipart/form-data">
+                    <input type="text" placeholder="Title" required name="title"/>
+                    <input type="text" placeholder="Author" required name="author"/>
+                    <input type="text" placeholder="Genre" required name="genre"/>
+                    <input type="text" placeholder="Type" required name="type"/>
+                    <textarea placeholder="Description" maxlength="500" required name="description"></textarea>
+                    <input type="file" id="file-input" name="coverBook"/>
+                    <input type="hidden" name="id" />
+                    <button type="submit">Edit</button>
+                </form>
+            </div>
+            
             <div class="profile-header">
                 <div class="left">
                    <div class="left-top">
@@ -39,8 +53,12 @@
                         <p>No books yet</p>
                     <% } else { %>
                         <% getAllBooks.forEach(book => { %>
-                            <a href="details/<%- book._id %>">
-                                <div class="book">
+                            <div class="book">
+                                <div class="actions">
+                                    <button class="remove" onclick="confirmDelete('<%- book._id %>')">-</button>
+                                    <button class="edit" onclick="editBook('<%- book._id %>', '<%- book.title %>', '<%- book.author %>', '<%- book.genre %>', '<%- book.type %>', '<%- book.description %>')">✏️</button>
+                                </div>
+                                <a href="details/<%- book._id %>">
                                     <div class="book-img">
                                         <img src="<%- book.cover %>" alt="Book" />
                                     </div>
@@ -48,8 +66,9 @@
                                         <h1><%- book.title %></h1>
                                         <p><%- book.author %></p>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
+                            
                         <% }); %>
                     <% } %>
                 </div>

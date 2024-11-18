@@ -32,6 +32,7 @@
       addBookBtn.addEventListener("click", function (event) {
         event.stopPropagation();
         formAddBook.style.display = "flex";
+        formAddBook.style.zIndex = "222";
       });
 
       function hideForm(e) {
@@ -40,6 +41,7 @@
           !formAddBook.contains(e.target)
         ) {
           formAddBook.style.display = "none";
+          formAddBook.style.zIndex = "0";
         }
       }
       editBtn.addEventListener("click", function (event) {

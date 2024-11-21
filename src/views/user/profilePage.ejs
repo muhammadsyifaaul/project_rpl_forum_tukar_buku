@@ -55,7 +55,7 @@
                         <% getAllBooks.forEach(book => { %>
                             <div class="book">
                                 <div class="actions">
-                                    <button class="remove" onclick="confirmDelete('<%- book._id %>')">-</button>
+                                    <button class="remove" onclick="confirmDelete('<%- book._id %>')"><i class='bx bx-trash-alt'></i></button>
                                     <button class="edit" onclick="editBook('<%- book._id %>', '<%- book.title %>', '<%- book.author %>', '<%- book.genre %>', '<%- book.type %>', '<%- book.description %>')">✏️</button>
                                 </div>
                                 <a href="details/<%- book._id %>">

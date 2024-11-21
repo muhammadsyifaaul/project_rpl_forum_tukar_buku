@@ -390,6 +390,24 @@ main {
     color: #fff;
     width: 20%;
 }
+.logout {
+    background-color: #e71919;
+    padding: 1rem;
+    border-radius: 8px;
+    color: #00e1ff;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
+.logout a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+}
+.logout:hover {
+    background-color: #ce1d1d;
+    transition: all 0.6s ease;
+}
 .profile-content {
     background-color: #313338;
     width: 92%;
@@ -403,6 +421,7 @@ main {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    scrollbar-width: none;
 }
 .add-book i {
     font-size: 3rem;
@@ -411,11 +430,12 @@ main {
 }
 .books {
     width: 90%;
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     display: flex;
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
+    
 }
 .books a {
     text-decoration: none;
@@ -435,17 +455,20 @@ main {
     width: 10vw;
     position: relative;
 }
+.book h1 {
+    text-align: center;
+}
 .book .remove {
     border: none;
     position: absolute;
     text-decoration: none;
-    font-size: 2rem;
+    font-size: 1.3rem;
     font-weight: 500;
-    padding: 0.01rem 0.4rem;
+    padding: 0.2rem 0.3rem;
     top: 0;
     right: 0;
     background-color: red;
-    color: #e2e0e0;
+    color: #ffffff;
     cursor: pointer;
     margin: 0;
 }
@@ -483,18 +506,18 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 0.2rem;
+    margin-top: 0.3rem;
 
 }
 .book-desc h1 {
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #000000;
 }
 .book-desc p {
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 0.6rem;
+    font-weight: 600;
     color: #383838;
 }
 .modal {

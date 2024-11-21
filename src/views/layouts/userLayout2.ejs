@@ -107,6 +107,11 @@
           description,
         });
       }
+      function logout() {
+        axios.get("/logout").then((res) => {
+          window.location.href = "/login";
+        });
+      }
     </script>
   </body>
 </html>

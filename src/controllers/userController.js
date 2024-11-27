@@ -9,7 +9,7 @@ exports.dashboard = async (req,res) => {
     const provinces = await Room.find()
     const rooms = await Room.find({ users: user.id });
     const users = await User.findById(user.id)
-    // console.log(messages)
+    console.log(users)
     if (!req.session.user) {
         return res.redirect('/login'); 
     }

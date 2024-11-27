@@ -37,7 +37,21 @@ const userSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Room'  
         }
-    ]
+    ],
+    title: {
+        type: String,
+        enum: [
+            'Initiate of the Quill',
+            'Seeker of Pages',
+            'Wanderer of Words',
+            'Quillbearer Apprentice',
+            'Runescribe Adept',
+            'Lorebound Nomad',
+            'Guardian of Inked Secrets',
+        ],
+        default: 'Initiate of the Quill', 
+    },
+
 });
 userSchema.pre('save', function(next) {
     if (this.isModified('password')) {

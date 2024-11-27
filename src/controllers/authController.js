@@ -17,11 +17,11 @@ exports.register = async (req,res) => {
     const user = new User({
         username,
         email,
-        password
+        password,
     })
 
     await user.save()
-
+    console.log(user)
     res.redirect('/login')
 }
 exports.login = async (req, res) => {

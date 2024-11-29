@@ -1,5 +1,5 @@
 const express = require('express');
-const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook, searchPage, searchBook, getAllBooks, getDetailsBookVisitor, getUser, profileUser, getAllTypes, filterByType, getAllGenres, filterByGenre, deleteBook, editBook, logout} = require('../controllers/userController');
+const { dashboard, addRoom, profilePage, sendChat, getMessage, settings, updateProfile, directMessage, getAllDm, getMsgById, updateSession, uploadBook, getDetailsBook, searchPage, searchBook, getAllBooks, getDetailsBookVisitor, getUser, profileUser, getAllTypes, filterByType, getAllGenres, filterByGenre, deleteBook, editBook, logout, leaderboard, event} = require('../controllers/userController');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
@@ -21,6 +21,7 @@ router.get('/getAllTypes',getAllTypes)
 router.get('/getAllGenres',getAllGenres)
 router.get('/getUser',getUser)
 router.get('/logout',logout)
+router.get('/event',event)
 router.post('/getMessage',getMessage)
 router.post('/addRoom',addRoom);
 router.delete('/deleteBook/:id',deleteBook)

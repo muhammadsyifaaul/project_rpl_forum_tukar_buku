@@ -13,7 +13,7 @@ exports.dashboard = async (req,res) => {
     if (!req.session.user) {
         return res.redirect('/login'); 
     }
-    // test
+
 
     res.cookie('username', user.username, { 
         maxAge: 24 * 60 * 60 * 1000, 
@@ -52,6 +52,20 @@ exports.settings = async (req,res) => {
         layout: 'layouts/userLayout2',
         user,
         findUser
+    })
+}
+exports.event = async (req,res) => {
+    const provinces = await Room.find()
+    const user = req.session.user;
+    const users = req.session.user
+    const rooms = await Room.find({ users: users.id });
+    res.render('user/events', {
+        title: 'Event',
+        layout: 'layouts/eventLayout',
+        rooms,
+        provinces,
+        users,
+        user
     })
 }
 exports.settings = async (req, res) => {

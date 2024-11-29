@@ -140,6 +140,30 @@ aside {
     transition: color 0.6s ease;
 
 }
+.leaderboard-icon a i{
+    text-decoration: none;
+    color: gold;
+    font-size: 1.7rem;
+    font-weight: 500;
+    transition: transform 1s ease;
+    cursor: pointer;
+}
+.leaderboard-icon a i:hover {
+    animation: moveThropy 1s ease;
+}
+@keyframes moveThropy {
+    0% {
+        transform: rotate(0deg);
+    } 25% {
+        transform: rotate(-50deg);
+    } 50% {
+        transform: rotate(0deg);
+    } 75% {
+        transform: rotate(50deg);
+    } 100% {
+        transform: rotate(0deg);
+    }
+}
 main {
     width: 100%;
     background-color: #282a2e;

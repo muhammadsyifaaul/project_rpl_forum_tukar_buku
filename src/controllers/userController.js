@@ -13,6 +13,7 @@ exports.dashboard = async (req,res) => {
     if (!req.session.user) {
         return res.redirect('/login'); 
     }
+    // test
 
     res.cookie('username', user.username, { 
         maxAge: 24 * 60 * 60 * 1000, 

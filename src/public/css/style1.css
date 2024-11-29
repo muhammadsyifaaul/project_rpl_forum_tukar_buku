@@ -336,7 +336,12 @@ main {
     flex-direction: column;
 }
 .profile-header {
-    background-color: #313338;
+    background: rgba(0,0,0,0.1);
+    background-image: url('../img/beautifulBg.png'), linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1));
+    background-blend-mode: overlay;
+    background-attachment: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
     width: 92%;
     height: 25vh;
     border-radius: 8px;
@@ -344,12 +349,14 @@ main {
     justify-content: flex-start;
     gap: 2rem;
     padding: 1rem;
+    position: relative;
 }
 .left {
     background: linear-gradient(180deg, #c29bd8 40%, #1e1f22 30%);
     width: 30%; 
     padding: 1rem 2rem;
     border-radius: 4px;
+    position: relative;
 }
 .left-top {
     display: flex;
@@ -357,6 +364,8 @@ main {
     gap: 1rem;
     padding: 0.5rem;
     color: #ffffff;
+    position: relative;
+    font-size: 1.3rem;
 }
 .left-top img {
     width: 5vw;
@@ -372,6 +381,20 @@ main {
     text-align: center;
     cursor: pointer;
 }
+.left-title {
+    display: flex;
+    color: #fff;
+    font-size: 1.2rem;
+    position: absolute;
+    right: 10%;
+    top: 50%;
+}
+.left-title h1 {
+    text-shadow: 0 0 4px mediumaquamarine,
+                 0 0 8px mediumaquamarine,
+                 0 0 10px mediumaquamarine;
+}
+
 .left-bottom a {
     text-decoration: none;
     color: #fff;
@@ -379,9 +402,11 @@ main {
 .middle {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
     color: #fff;
     width: 35%;
+    text-align: center;
 }
 .middle h1:nth-child(2) i{
     font-size: 1.4rem;
@@ -392,6 +417,9 @@ main {
     gap: 1rem;
     color: #fff;
     width: 40%;
+}
+.right h1 i {
+    font-size: 1.4rem;
 }
 .logout {
     background-color: #e71919;

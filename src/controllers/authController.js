@@ -12,18 +12,35 @@ exports.loginForm = (req,res) => {
         layout: 'layouts/authLayouts'
     })
 }
-exports.register = async (req,res) => {
-    const {username,email,password} = req.body
-    const user = new User({
-        username,
-        email,
-        password,
-    })
+exports.register = async (req, res) => {
+    try {
+        // Ambil data dari request body
+        const { username, email, password } = req.body;
 
-    await user.save()
-    console.log(user)
-    res.redirect('/login')
-}
+        // Buat user baru dengan constructor
+        const user = new User({
+            username: username,
+            email: email,
+            password: password,
+        });
+
+        // Debug sebelum menyimpan ke database
+        console.log('Before save:', user); // Harus menunjukkan title: 'Initiate of the Quill'
+
+        // Simpan user ke database
+        await user.save();
+
+
+        console.log('After save:', user);
+
+
+        return res.redirect('/login');
+    } catch (error) {
+        // Tangani error jika terjadi
+        console.error('Error during registration:', error);
+    }
+};
+
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });

@@ -34,13 +34,16 @@
                     <img src="<%- user.avatar || 'img/icon.jpg' %>" alt="Profile" />
                     <h1><%- user.displayName || user.username %></h1>
                    </div>
+                   <div class="left-title">
+                       <h1><%- user.title %></h1>
+                   </div>
                 </div>
                 <div class="middle">
                     <h1><i class='bx bx-book-alt'></i> Books : <%- getAllBooks.length %></h1>
                     <h1><i class='bx bx-refresh'></i></i> Total Exchange Success : 50x</h1>
                 </div>
                 <div class="right">
-                    <h1><i class='bx bx-star' ></i> Title : 😎 Exchange Master</h1>
+                    <h1><i class='bx bx-star' ></i> Title : <%- user.title %></h1>
                     <h1><i class='bx bx-user-plus'></i> Badge : 🦚🦚</h1>
                 </div>
             </div>

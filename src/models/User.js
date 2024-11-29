@@ -26,18 +26,6 @@ const userSchema = mongoose.Schema({
     city: {
         type: String,
     },
-    books: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Book'  
-        }
-    ],
-    rooms: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Room'  
-        }
-    ],
     title: {
         type: String,
         enum: [
@@ -50,7 +38,21 @@ const userSchema = mongoose.Schema({
             'Guardian of Inked Secrets',
         ],
         default: 'Initiate of the Quill', 
+        required: true
     },
+    books: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Book'
+        }
+    ],
+    rooms: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Room'
+        }
+    ],
+
 
 });
 userSchema.pre('save', function(next) {

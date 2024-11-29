@@ -810,6 +810,9 @@ main {
 }
 .rooms a {
     text-decoration: none;
+    color: #888;
+    font-weight: 500;
+    font-size: 1.2rem;
 }
 .user-dm:hover {
     background-color: #404246;

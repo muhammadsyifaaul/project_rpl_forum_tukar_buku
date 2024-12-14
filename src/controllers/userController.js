@@ -2,6 +2,7 @@ const Book = require("../models/Book");
 const Message = require("../models/Message");
 const Room = require("../models/Room")
 const User = require("../models/User")
+const mongoose = require('mongoose');
 
 exports.dashboard = async (req,res) => {
     const user = req.session.user;
@@ -43,6 +44,7 @@ exports.profilePage = async (req,res) => {
         getAllBooks
     })
 }
+
 exports.settings = async (req,res) => {
     const user = req.session.user
     const findUser = await User.findById(user.id)
@@ -106,7 +108,7 @@ exports.addRoom = async (req, res) => {
 
    
         if (result.nModified > 0) {
-            return res.status(200).send({ message: 'User added to rooms successfully' });
+            const angka =1
         } else {
             return res.status(404).send({ message: 'No rooms found for this province' });
         }
@@ -462,3 +464,157 @@ exports.logout = async (req, res) => {
     req.session.destroy();
     res.redirect('/login');
 };
+
+const Transaction = require('../models/Transaction');
+exports.renderTransaction = async (req, res) => {
+    const user = req.session.user;
+    console.log(user);
+
+    const listTarget = await Message.aggregate([
+        { $match: { $or: [{ sender: user.id }, { room: 'private' }] } },
+        { $lookup: { from: 'users', localField: 'receiver', foreignField: '_id', as: 'receiver' } },
+        { $unwind: '$receiver' },
+        { $match: { 'receiver._id': { $ne: new mongoose.Types.ObjectId(user.id) } } },
+        { $group: { _id: '$receiver._id', receiver: { $first: '$receiver' } } }
+    ]);
+
+    console.log(listTarget);
+
+    const myBook = await Book.find({ owner: user.id });
+    console.log(myBook);
+
+    const transactions = await Transaction.find({ sender: user.id }).populate('sender receiver book');
+    console.log(transactions);
+
+    res.render('user/transactionPage', {
+        title: 'Transaction',
+        layout: 'layouts/userLayout2',
+        user,
+        listTarget,
+        myBook,
+        transactions
+    });
+};
+
+exports.getBookReceiver = async (req, res) => {
+    async (req, res) => {
+      try {
+          const receiverId = req.params.receiverId;
+          const books = await Book.find({ owner: receiverId });
+          res.json(books);
+      } catch (error) {
+          console.error('Error fetching receiver books:', error);
+          res.status(500).json({ error: 'Error fetching receiver books' });
+      }
+    }
+};
+
+exports.createTransaction = async (req, res) => {
+    try {
+        const { receiver, senderBook, receiverBook, expedition, receiptNumberSender, receiptNumberReceiver } = req.body;
+        const user = req.session.user;
+
+        const transaction = new Transaction({
+            sender: user.id,
+            receiver: receiver,
+            senderBook: senderBook,
+            receiverBook: receiverBook,
+            status: 'PENDING',
+            expedition: expedition,
+            receiptNumberSender: receiptNumberSender,
+            receiptNumberReceiver: receiptNumberReceiver
+        });
+
+        await transaction.save();
+        res.redirect('/transaction'); // Gantilah dengan halaman yang sesuai
+    } catch (error) {
+        console.error('Error creating transaction:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+exports.getTransactionDetails = async (req, res) => {
+    try {
+        const transactionId = req.params.transactionId;
+        const transaction = await Transaction.findById(transactionId).populate('sender receiver');
+        console.log(`ini transaction, ${transaction}`);
+        console.log(`ini trannsaction id${transactionId}`);
+        if (!transaction) {
+            return res.status(404).json({ error: 'Transaction not found' });
+        }
+        res.json(transaction);
+    } catch (error) {
+        console.error('Error fetching transaction details:', error);
+        res.status(500).json({ error: 'Error fetching transaction details' });
+    }
+};
+
+
+
+exports.getTransactionsForReceiver = async (req, res) => {
+    try {
+        const user = req.session.user;
+        const transactions = await Transaction.find({ receiver: user.id, status: 'PENDING' }).populate('sender receiver');
+        res.json(transactions);
+    } catch (error) {
+        console.error('Error fetching transactions for receiver:', error);
+        res.status(500).json({ error: 'Error fetching transactions for receiver' });
+    }
+};
+
+
+
+
+exports.updateTransaction = async (req, res) => {
+    try {
+        const transactionId = req.params.transactionId;
+        const { receiptNumberReceiver } = req.body;
+
+        await Transaction.findByIdAndUpdate(transactionId, {
+            receiptNumberReceiver: receiptNumberReceiver,
+            status: 'ACCEPTED'
+        });
+
+        res.redirect('/transaction-page'); // Gantilah dengan halaman yang sesuai
+    } catch (error) {
+        console.error('Error updating transaction:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+exports.renderTransaction = async (req, res) => {
+    const user = req.session.user;
+    console.log(user);
+
+    const listTarget = await Message.aggregate([
+        { $match: { $or: [{ sender: user.id }, { room: 'private' }] } },
+        { $lookup: { from: 'users', localField: 'receiver', foreignField: '_id', as: 'receiver' } },
+        { $unwind: '$receiver' },
+        { $match: { 'receiver._id': { $ne: new mongoose.Types.ObjectId(user.id) } } },
+        { $group: { _id: '$receiver._id', receiver: { $first: '$receiver' } } }
+    ]);
+
+    console.log(listTarget);
+
+    const myBook = await Book.find({ owner: user.id });
+    console.log(myBook);
+
+    const transactions = await Transaction.find({ sender: user.id }).populate('sender receiver');
+    console.log(transactions);
+
+    res.render('user/transactionPage', {
+        title: 'Transaction',
+        layout: 'layouts/userLayout2',
+        user,
+        listTarget,
+        myBook,
+        transactions
+    });
+};
+
+exports.renderDetailTransaction = async (req, res) => {
+    res.render('user/transactionDetails', {
+        title: 'Transaction',
+        layout: 'layouts/userLayout2',
+    });
+}

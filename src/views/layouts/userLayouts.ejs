@@ -33,73 +33,91 @@
     let users = <%- JSON.stringify(users) %>;
     
 
-    chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        fetch('/sendChat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chat: messageInput.value,
-                city: currentRoom,
-                roomType
-            })
+    chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = messageInput.value.trim();
+    
+    if (message) {
+        // Tambahkan pesan ke DOM segera
+        addMessageToDOM({
+            username: 'You',  // atau bisa ambil dari variabel yang menyimpan username pengguna
+            message: message,
+            timestamp: new Date().toLocaleTimeString()
         });
 
-        const message = messageInput.value.trim();
+        try {
+            const response = await fetch('/sendChat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat: message,
+                    city: currentRoom,
+                    roomType
+                })
+            });
 
-        if (message) {
-            socket.emit('chatMessage', message);
-            messageInput.value = '';
-        }
-    });
-    socket.on('chatMessage', (msg) => {
-        console.log(`Incoming message from server:`, msg);
-    if (msg && msg.username && msg.message) {
-        console.log(`Rendering message from: ${msg.username} with content: ${msg.message}`);
-        const existingMessages = document.querySelectorAll('.chat-detail');
-        let messageAlreadyExists = false;
-        existingMessages.forEach(messageDetail => {
-            const messageText = messageDetail.querySelector('.chat-text p').innerText;
-            if (messageText === msg.message) {
-                messageAlreadyExists = true;
+            if (response.ok) {
+                socket.emit('chatMessage', message);
+                messageInput.value = '';
+            } else {
+                console.error('Error sending message:', response.statusText);
             }
-        });
-
-        if (!messageAlreadyExists) {
-
-            const chatDiv = document.createElement('div');
-            chatDiv.classList.add('chat');
-
-            const chatIconDiv = document.createElement('div');
-            chatIconDiv.classList.add('chat-icon');
-            const avatar = users.avatar ? users.avatar : 'img/icon.jpg';
-            chatIconDiv.innerHTML = `<img src="${avatar}" alt=""/>`;
-
-            const chatDetailDiv = document.createElement('div');
-            chatDetailDiv.classList.add('chat-detail');
-
-            const chatDateDiv = document.createElement('div');
-            chatDateDiv.classList.add('chat-date');
-            chatDateDiv.innerHTML = `<p>${msg.username} <span>${msg.timestamp}</span></p>`;
-
-            const chatTextDiv = document.createElement('div');
-            chatTextDiv.classList.add('chat-text');
-            chatTextDiv.innerHTML = `<p>${msg.message}</p>`;
-            chatDetailDiv.appendChild(chatDateDiv);
-            chatDetailDiv.appendChild(chatTextDiv);
-            chatDiv.appendChild(chatIconDiv);
-            chatDiv.appendChild(chatDetailDiv);
-
-
-            messageArea.appendChild(chatDiv);
-            messageArea.scrollTop = messageArea.scrollHeight;
+        } catch (error) {
+            console.error('Fetch error:', error);
         }
-        } else {
+    }
+});
+
+socket.on('chatMessage', (msg) => {
+    console.log(`Incoming message from server:`, msg);
+    if (msg && msg.username && msg.message) {
+        addMessageToDOM(msg);
+    } else {
         console.error('Received malformed message:', msg);
+    }
+});
+
+function addMessageToDOM(msg) {
+    const existingMessages = document.querySelectorAll('.chat-detail');
+    let messageAlreadyExists = false;
+    existingMessages.forEach(messageDetail => {
+        const messageText = messageDetail.querySelector('.chat-text p').innerText;
+        if (messageText === msg.message) {
+            messageAlreadyExists = true;
         }
     });
+
+    if (!messageAlreadyExists) {
+        const chatDiv = document.createElement('div');
+        chatDiv.classList.add('chat');
+
+        const chatIconDiv = document.createElement('div');
+        chatIconDiv.classList.add('chat-icon');
+        const avatar = users.avatar ? users.avatar : 'img/icon.jpg';
+        chatIconDiv.innerHTML = `<img src="${avatar}" alt=""/>`;
+
+        const chatDetailDiv = document.createElement('div');
+        chatDetailDiv.classList.add('chat-detail');
+
+        const chatDateDiv = document.createElement('div');
+        chatDateDiv.classList.add('chat-date');
+        chatDateDiv.innerHTML = `<p>${msg.username} <span>${msg.timestamp}</span></p>`;
+
+        const chatTextDiv = document.createElement('div');
+        chatTextDiv.classList.add('chat-text');
+        chatTextDiv.innerHTML = `<p>${msg.message}</p>`;
+        chatDetailDiv.appendChild(chatDateDiv);
+        chatDetailDiv.appendChild(chatTextDiv);
+        chatDiv.appendChild(chatIconDiv);
+        chatDiv.appendChild(chatDetailDiv);
+
+        messageArea.appendChild(chatDiv);
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+}
+
 
 
 
@@ -204,43 +222,59 @@ function showCityRoom(city) {
 
 
 document.querySelector("form.modal-form").addEventListener("submit", function (event) {
-        event.preventDefault();
-        const selectedProvince = this.querySelector('select[name="province"]').value;
+    event.preventDefault();
 
+    const selectedProvince = this.querySelector('select[name="province"]').value;
 
-        const provinceInitials = selectedProvince
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase())
-        .join("");
-        const nav = document.querySelector(".nav-side");
-        const newIconDiv = document.createElement("div");
-        newIconDiv.classList.add("nav-item");
+    // Periksa apakah provinsi sudah ada di sisi klien
+    const existingProvinces = Array.from(document.querySelectorAll(".nav-side .nav-item a"))
+        .map((icon) => icon.dataset.id);
 
-        newIconDiv.innerHTML = `
-        <div class="white-expand"></div>
-        <div class="icon">
-        <a href="javascript:void(0);" class="icon" data-id="${selectedProvince}" onclick="showCities('${selectedProvince}')">
-        <h1>${provinceInitials}</h1>
-        </a>
-        </div>
-        `;
+    if (existingProvinces.includes(selectedProvince)) {
+        alert("Province already exists for this user.");
+        return; // Jangan lanjutkan jika sudah ada
+    }
 
-
-        nav.insertBefore(newIconDiv, document.querySelector(".open-modal-btn"));
-
-        fetch("/addRoom", {
-            method: "POST",
-            headers: {
+    fetch("/addRoom", {
+        method: "POST",
+        headers: {
             "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ province: selectedProvince }),
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log("Room and User updated:", data);
-        })
-        .catch((error) => console.error("Error:", error));
-        });
+        },
+        body: JSON.stringify({ province: selectedProvince }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+
+            // Tambahkan provinsi ke sisi klien jika berhasil
+            const provinceInitials = selectedProvince
+                .split(" ")
+                .map(word => word.charAt(0).toUpperCase())
+                .join("");
+
+            const nav = document.querySelector(".nav-side");
+            const newIconDiv = document.createElement("div");
+            newIconDiv.classList.add("nav-item");
+
+            newIconDiv.innerHTML = `
+                <div class="white-expand"></div>
+                <div class="icon">
+                    <a href="javascript:void(0);" class="icon" data-id="${selectedProvince}" onclick="showCities('${selectedProvince}')">
+                        <h1>${provinceInitials}</h1>
+                    </a>
+                </div>
+            `;
+
+            nav.insertBefore(newIconDiv, document.querySelector(".open-modal-btn"));
+
+
+        
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to add province due to an error.");
+    });
+});
+
 
         const modal = document.getElementById("myModal");
         const openModalBtn = document.getElementById("openModalBtn");
@@ -504,5 +538,3 @@ function showDm() {
       }
 
     </script>
-  </body>
-</html>

@@ -52,6 +52,10 @@ const userSchema = mongoose.Schema({
             ref: 'Room'
         }
     ],
+    total_transaction : {
+        type: Number,
+        default: 0
+    }
 
 
 });

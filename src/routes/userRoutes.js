@@ -28,6 +28,13 @@ const {
   logout,
   leaderboard,
   event,
+  renderTransaction,
+  getBookReceiver,
+  createTransaction,
+  getTransactionDetails,
+  getTransactionsForReceiver,
+  updateTransaction,
+  renderDetailTransaction,
 } = require("../controllers/userController");
 const multer = require("multer");
 const path = require("path");
@@ -51,6 +58,7 @@ router.get("/getAllGenres", getAllGenres);
 router.get("/getUser", getUser);
 router.get("/logout", logout);
 router.get("/event", event);
+router.get("/transaction",renderTransaction)
 router.post("/getMessage", getMessage);
 router.post("/addRoom", addRoom);
 router.delete("/deleteBook/:id", deleteBook);
@@ -58,6 +66,22 @@ router.post("/sendChat", sendChat);
 router.post("/directMessage", directMessage);
 router.post("/getMsgById", getMsgById);
 router.post("/updateSession", updateSession);
+router.get('/detailsTransaction',renderDetailTransaction)
+router.get('/receiver-books/:receiverId', getBookReceiver);
+
+
+
+// Route untuk membuat transaksi baru
+router.post('/transaction', createTransaction);
+
+// Endpoint untuk mendapatkan detail transaksi berdasarkan ID
+router.get('/transaction/:transactionId', getTransactionDetails);
+
+router.get('/transactions/for-receiver', getTransactionsForReceiver);
+
+router.post('/transaction/update/:transactionId', updateTransaction);
+
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

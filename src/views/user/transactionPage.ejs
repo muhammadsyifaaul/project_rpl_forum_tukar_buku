@@ -1,0 +1,154 @@
+<div class="transaction-container">
+    <div class="make-transaction">
+        <form action="/transaction" method="post">
+            <h1>Make Transaction</h1>
+            <label for="request">REQUEST BY</label>
+            <input type="text" placeholder="user1" name="request" value="you" disabled/>
+            <label for="receiver">RECEIVE BY</label>
+            <select name="receiver" id="receiver" onchange="updateReceiverBooks()">
+                <% listTarget.forEach(target => { %>
+                    <option value="<%= target.receiver._id %>"><%= target.receiver.username %></option>
+                <% }) %>
+            </select>
+            <label for="your-book">YOUR BOOK</label>
+            <select name="your-book" id="your-book">
+                <% myBook.forEach(book => { %>
+                    <option value="<%= book._id %>"><%= book.title %></option>
+                <% }) %>
+            </select>
+            <label for="receiver-book">RECEIVER BOOK</label>
+            <select name="receiverBook" id="receiver-book">
+                <!-- Buku penerima akan diisi oleh JavaScript -->
+            </select>
+            <label for="expedition">EXPEDITION</label>
+            <select name="expedition" id="expedition">
+                <option value="expedition1">expedition1</option>
+                <option value="expedition2">expedition2</option>
+                <option value="expedition3">expedition3</option>
+            </select>
+            <label for="receiptNumberSender">YOUR RECEIPT NUMBER</label>
+            <input type="text" name="receiptNumberSender">
+            <label for="receiptNumberReceiver">RECEIVER RECEIPT NUMBER</label>
+            <input type="text" name="receiptNumberReceiver">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <div class="make-transaction">
+        <form action="/transaction/update" method="post" id="receiver-form">
+            <h1>Complete Transaction</h1>
+            <label for="request">REQUEST BY</label>
+            <input type="text" name="sender" id="sender" disabled/>
+            <label for="receiver">RECEIVE BY</label>
+            <input type="text" name="receiver" id="receiver" disabled/>
+            <label for="senderBook">YOUR BOOK</label>
+            <input type="text" name="senderBook" id="yourBook" disabled/>
+            <label for="receiverBook">RECEIVER BOOK</label>
+            <input type="text" name="receiverBook" id="receiverBook" disabled/>
+            <label for="expedition">EXPEDITION</label>
+            <input type="text" name="expedition" id="expedition" disabled/>
+            <label for="receiptNumberSender">YOUR RECEIPT NUMBER</label>
+            <input type="text" name="receiptNumberSender" id="receiptNumberSender" disabled/>
+            <label for="receiptNumberReceiver">RECEIVER RECEIPT NUMBER</label>
+            <input type="text" name="receiptNumberReceiver" id="receiptNumberReceiver" required/>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="transaction-items">
+        <div class="add-transaction">
+            <i class='bx bx-basket bx-tada bx-flip-horizontal' onclick="showFormTransaction()"></i>
+        </div>
+        <div class="notification">
+            <i class='bx bx-bell bx-tada' onclick="showNotificationTransactions()"></i>
+        </div>
+        <div class="cards">
+            <!-- Card untuk transaksi -->
+            <% transactions.forEach(transaction => { %>
+                <a href="/detailsTransaction">
+                    <div class="card" onclick="fillTransactionForm('<%= transaction._id %>')">
+                        <h1>Transaction ID : <%= transaction._id %></h1>
+                        <h1>Status : <%= transaction.status %></h1>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function updateReceiverBooks() {
+        const receiverSelect = document.getElementById('receiver');
+        const receiverBookSelect = document.getElementById('receiver-book');
+        const selectedReceiverId = receiverSelect.value;
+        console.log(`Selected receiver ID: ${selectedReceiverId}`);
+
+        // Clear existing options
+        receiverBookSelect.innerHTML = '';
+
+        // Fetch receiver books using Axios
+        axios.get(`/receiver-books/${selectedReceiverId}`)
+            .then(response => {
+                const books = response.data;
+                console.log('Books received:', books);
+                books.forEach(book => {
+                    const option = document.createElement('option');
+                    option.value = book._id;
+                    option.textContent = book.title;
+                    receiverBookSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching receiver books:', error);
+            });
+    }
+
+    function fillTransactionForm(transactionId) {
+    axios.get(`/transaction/${transactionId}`)
+        .then(response => {
+            const transaction = response.data;
+            console.log(`ini transaction form, ${JSON.stringify(transaction)}`);
+            showFormTransaction(); // Tampilkan form
+
+            // Isi data form dengan data transaksi
+            document.getElementById('sender').value = transaction.sender.username || 'Unknown';
+            document.getElementById('receiver').value = transaction.receiver.username || 'Unknown';
+            document.getElementById('yourBook').value = transaction.yourBook || 'Not specified';
+            document.getElementById('receiverBook').value = transaction.receiverBook || 'Not specified';
+            document.getElementById('expedition').value = transaction.expedition || 'Not specified';
+            document.getElementById('receiptNumberSender').value = transaction.receiptNumberSender || '';
+            document.getElementById('receiptNumberReceiver').value = transaction.receiptNumberReceiver || '';
+
+            // Update action pada form "Complete Transaction"
+            document.getElementById('receiver-form').action = `/transaction/update/${transactionId}`;
+        })
+        .catch(error => {
+            console.error('Error fetching transaction details:', error);
+        });
+}
+
+
+    function showFormTransaction() {
+        const makeTransactionForm = document.querySelector('.make-transaction');
+        makeTransactionForm.style.display = 'flex';
+    }
+
+    function showNotificationTransactions() {
+        // Ambil daftar transaksi yang membutuhkan input dari receiver
+        axios.get('/transactions/for-receiver')
+            .then(response => {
+                const transactions = response.data;
+                const cardsContainer = document.querySelector('.cards');
+                cardsContainer.innerHTML = ''; // Hapus konten sebelumnya
+                transactions.forEach(transaction => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    card.innerHTML = `<h1>Transaction ID : ${transaction._id}</h1><h1>Status : ${transaction.status}</h1>`;
+                    card.addEventListener('click', () => fillTransactionForm(transaction._id));
+                    cardsContainer.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching notification transactions:', error);
+            });
+    }
+</script>

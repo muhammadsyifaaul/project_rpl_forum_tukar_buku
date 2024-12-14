@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
     
     if (!user) {
-        console.log('User not found');
+        alert('User not found');
         return res.redirect('/login');
     }
 

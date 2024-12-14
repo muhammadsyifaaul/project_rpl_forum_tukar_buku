@@ -112,6 +112,32 @@
           window.location.href = "/login";
         });
       }
+
+      function showFormTransaction() {
+        const addTransactionButton = document.querySelector('.add-transaction i');
+        const makeTransactionForm = document.querySelector('.make-transaction');
+        const transactionForm = document.getElementById('transactionForm');
+        
+        
+
+        addTransactionButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            makeTransactionForm.style.display = 'flex';
+            makeTransactionForm.style.zIndex = '99999';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!makeTransactionForm.contains(e.target) && e.target !== addTransactionButton) {
+                makeTransactionForm.style.display = 'none';
+            }
+        });
+
+      }
+      console.log(user)
+
+    
+
+        
     </script>
   </body>
 </html>
